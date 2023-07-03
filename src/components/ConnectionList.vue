@@ -1,7 +1,7 @@
 <template>
   <div class="container my-5">
     <div class="row">
-      <span class="add"> +  Add </span>
+      <span @click="$router.push({ name: 'create-connection'})" class="add"> +  Add </span>
     </div>
     <div class="row">
       <div class="col-md-4  p-0">
@@ -129,7 +129,6 @@ export default {
   background: #FFF;
   border-radius: 60px;
   width: 78px;
-  margin-top: 10%;
   box-shadow: 0 0 5px 0 #A0D468;
   font-size: 20px;
   cursor: pointer;
@@ -149,6 +148,5 @@ export default {
   display: inline;
 }
 
-.add:hover, .add:active{
-}
+
 </style>
