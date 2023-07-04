@@ -15,14 +15,14 @@ function onDragStart(event, nodeType) {
       <div class="accordion-item mb-2">
         <h2 class="accordion-header" id="flush-headingOne">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
-            <i class="fa-solid fa-table me-2"></i>Tables
+            <i class="fa-solid fa-folder-tree me-2"></i>Tables
           </button>
         </h2>
         <div id="flush-collapseOne" class="accordion-collapse collapse py-2" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
           <div>
             <div class="nodes p-2 ms-4">
-              <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event, 'Table One')" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample1">
-                <i class="fa-solid fa-folder-tree me-2"></i>Table One
+              <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event, 'input')" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample1">
+                <i class="fa-solid fa-table me-2"></i>Table One
               </button>
             </div>
             <div class="collapse ms-5 pe-2" id="collapseExample1">
@@ -39,8 +39,8 @@ function onDragStart(event, nodeType) {
           </div>
           <div>
             <div class="nodes p-2 ms-4">
-              <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event, 'Table Two')" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">
-                <i class="fa-solid fa-folder-tree me-2"></i>Table Two
+              <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event, 'input')" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">
+                <i class="fa-solid fa-table me-2"></i>Table Two
               </button>
             </div>
             <div class="collapse ms-5 pe-2" id="collapseExample2">
@@ -65,8 +65,8 @@ function onDragStart(event, nodeType) {
         </h2>
         <div id="flush-collapseTwo" class="accordion-collapse collapse py-2" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
           <div class="nodes p-2 ms-4">
-            <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event, 'View One')" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample3" aria-expanded="false" aria-controls="collapseExample3">
-              <i class="fa-solid fa-folder-tree me-2"></i>View One
+            <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event, 'input')" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample3" aria-expanded="false" aria-controls="collapseExample3">
+              <i class="fa-solid fa-table me-2"></i>View One
             </button>
           </div>
           <div class="collapse ms-5 pe-2" id="collapseExample3">
