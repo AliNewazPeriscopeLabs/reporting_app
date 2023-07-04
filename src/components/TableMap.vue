@@ -4,6 +4,7 @@ import { Panel, PanelPosition, VueFlow, useVueFlow } from '@vue-flow/core'
 import { nextTick, watch } from 'vue'
 import Sidebar from './Sidebar.vue'
 import OptionsPen from './OptionsPen.vue'
+import ColorSelectorNode from './TableNode.vue'
 import { ref } from 'vue'
 
 let tables = ref([])
@@ -88,6 +89,10 @@ function onDrop(event) {
     <Sidebar />
     <div class="d-flex flex-column justify-content-center align-items-center w-100">
       <VueFlow v-model="tables" @dragover="onDragOver" >
+            <template #node-custom="{ data }">
+                <ColorSelectorNode :data="data"  />
+            </template>
+
             <Panel :position="PanelPosition.TopRight" class="controls">
                 <button style="background-color: #113285; color: white" title="Reset Transform" @click="resetTransform">
                     <svg width="16" height="16" viewBox="0 0 32 32">

@@ -9,7 +9,7 @@ function onDragStart(event, nodeType) {
 
 <template>
   <aside>
-    <div class="description text-secondary">You can drag these nodes to the pane.</div>
+    <!-- <div class="description text-secondary">You can drag these nodes to the pane.</div> -->
 
     <div class="accordion accordion-flush" id="accordionFlushExample">
       <div class="accordion-item mb-2">

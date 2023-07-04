@@ -1,5 +1,5 @@
 <template>
-    <div class="shadow-style w-100">
+    <div class=" w-100">
         <!-- <h2 class="text-center p-3">Option pen</h2> -->
         <nav>
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
