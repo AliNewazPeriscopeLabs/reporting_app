@@ -1,5 +1,5 @@
 <template>
-    <div class="card p-1 shadow w-100">
+    <div class="card p-1 w-100">
         <!-- <h2 class="text-center p-3">Option pen</h2> -->
         <nav>
             <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
