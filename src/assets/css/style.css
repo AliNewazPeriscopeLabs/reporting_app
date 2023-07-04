@@ -1256,7 +1256,7 @@ input[type="search"]::-webkit-search-results-decoration {
 /* table map */
 
 .vue-flow {
-  height: 62vh;
+  height: 70vh;
 }
 .vue-flow__minimap {
   transform: scale(75%);
@@ -1327,6 +1327,10 @@ input[type="search"]::-webkit-search-results-decoration {
   box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 }
 
+.shadow-style {
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
 .accordion-button:focus {
   box-shadow: none !important;
 }
@@ -1370,4 +1374,8 @@ input[type="search"]::-webkit-search-results-decoration {
   background-size: 1.25rem;
   transition: transform 0.2s ease-in-out;
   transform: rotate(-180deg);
+}
+
+.nav-tabs {
+  border-bottom: 0px !important;
 }
