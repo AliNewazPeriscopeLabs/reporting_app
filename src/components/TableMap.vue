@@ -67,9 +67,8 @@ function onDrop(event) {
 
 <template>
   <div class="dndflow" @drop="onDrop">
-    <VueFlow @dragover="onDragOver" />
-
     <Sidebar />
+    <VueFlow @dragover="onDragOver" />
   </div>
 </template>
 <style scoped>
