@@ -7,7 +7,7 @@ import { ref } from 'vue'
 let tables = ref([])
 let id = 0
 function getId() {
-  return `dndnode_${id++}`
+  return `table_${id++}`
 }
 
 const { findNode, onConnect, addEdges, addNodes, project, vueFlowRef, $reset } = useVueFlow({
@@ -23,7 +23,7 @@ const { findNode, onConnect, addEdges, addNodes, project, vueFlowRef, $reset } =
 
 function resetTransform() {
   tables = [];
-  $reset()
+  $reset();
 }
 function onDragOver(event) {
   event.preventDefault()
@@ -33,7 +33,15 @@ function onDragOver(event) {
   }
 }
 
-onConnect((params) => addEdges(params))
+onConnect((params) =>{
+    // console.log(params);
+    addEdges({
+        ...params,
+        label: 'Inner-Join',
+        style: { stroke: 'orange' },
+        labelBgStyle: { fill: 'orange' }
+    })
+})
 
 function onDrop(event) {
   const type = event.dataTransfer?.getData('application/vueflow')
@@ -67,7 +75,6 @@ function onDrop(event) {
       },
       { deep: true, flush: 'post' },
     )
-    console.log(node);
   })
 }
 </script>
