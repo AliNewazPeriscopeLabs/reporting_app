@@ -1256,7 +1256,7 @@ input[type="search"]::-webkit-search-results-decoration {
 /* table map */
 
 .vue-flow {
-  height: 80vh;
+  height: 100vh;
 }
 .vue-flow__minimap {
   transform: scale(75%);
@@ -1313,4 +1313,30 @@ input[type="search"]::-webkit-search-results-decoration {
     flex-direction: row;
     gap: 5px
   }
+}
+
+.dndflow aside {
+  background: #F8F8F8;
+  border-right: none;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.dndflow aside .nodes > * {
+  width: 100%;
+}
+
+.accordion-button:focus {
+  box-shadow: none !important;
+}
+
+.btn-style {
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+}
+
+.accordion-button::after {
+  background-image: url(../../../public/images/plus.png);
+}
+
+.accordion-button:not(.collapsed)::after {
+  background-image: url(../../../public/images/minus.png);
 }

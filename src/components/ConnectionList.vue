@@ -15,7 +15,7 @@
               <i class="fas fa-wave-square p-05 fs-12"></i><p class="card-text">Host:port</p>
             </div>
             <div class="d-flex justify-content-center mt-3">
-              <router-link to="/" class="btn btn-primary w-100">Connect</router-link>
+              <router-link to="/table-map" class="btn btn-primary w-100">Connect</router-link>
             </div>
           </div>
         </div>
