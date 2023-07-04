@@ -87,7 +87,7 @@ function onDrop(event) {
 <template>
   <div class="dndflow" @drop="onDrop">
     <Sidebar />
-    <div class="d-flex flex-column justify-content-center align-items-center w-100">
+    <div class="d-flex flex-column justify-content-center align-items-center w-100" style="height: 100vh;">
       <VueFlow v-model="tables" @dragover="onDragOver" >
             <template #node-custom="{ data }">
                 <ColorSelectorNode :data="data"  />
