@@ -1,4 +1,5 @@
 <script setup>
+import { Background } from '@vue-flow/background'
 import { Panel, PanelPosition, VueFlow, useVueFlow } from '@vue-flow/core'
 import { nextTick, watch } from 'vue'
 import Sidebar from './Sidebar.vue'
@@ -39,7 +40,8 @@ onConnect((params) =>{
         ...params,
         label: 'Inner-Join',
         style: { stroke: 'orange' },
-        labelBgStyle: { fill: 'orange' }
+        labelBgStyle: { fill: 'orange' },
+        type: 'custom',
     })
 })
 
@@ -90,6 +92,7 @@ function onDrop(event) {
                 </svg>
             </button>
         </Panel>
+        <Background/>
     </VueFlow>
   </div>
 </template>

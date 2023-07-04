@@ -51,16 +51,80 @@
                 </div>
             </div>
             <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-                <p><strong>This is some placeholder content the Profile tab's associated content.</strong>
-                    Clicking another tab will toggle the visibility of this one for the next.
-                    The tab JavaScript swaps classes to control the content visibility and styling. You can use it with
-                    tabs, pills, and any other <code>.nav</code>-powered navigation.</p>
+                <div class="query-builder">
+                    <table class="table table-hover table-borderless">
+                        <thead>
+                            <tr>
+                                <th style="width: 10%"></th>
+                                <th style="width: 30%">Field</th>
+                                <th style="width: 10%"></th>
+                                <th style="width: 30%">Filter</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="rule-container">
+                                <td>
+                                    <select class="form-control" style="display: none;">
+                                        <option>And</option>
+                                        <option>Or</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" required="required"><option value="">Please Choose</option><option value="">Customer Records &gt; Customer ID</option><option value="">Customer Records &gt; Customer Data</option><option value="">Customer Records &gt; Address</option></select>
+                                    </div>
+                                </td>
+                                <td data-bind="with: Field"></td>
+                                <td data-bind="with: Field"></td>
+                                <td>
+                                    <span data-bind="visible: Field() &amp;&amp; Field().forced" class="badge badge-info" style="display: none;">Required Filter</span>
+                                    <button class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
+                                    <!-- ko if: Field() && Field().fieldType == 'DateTime' && Operator() == 'range' && $root.canAddSeries() && $index()==0 --><!--/ko -->
+                                </td>
+                            </tr>
+                            <!-- ko foreach: compareTo --><!-- /ko -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
-                <p><strong>This is some placeholder content the Contact tab's associated content.</strong>
-                    Clicking another tab will toggle the visibility of this one for the next.
-                    The tab JavaScript swaps classes to control the content visibility and styling. You can use it with
-                    tabs, pills, and any other <code>.nav</code>-powered navigation.</p>
+                <div class="query-builder">
+                    <table class="table table-hover table-borderless">
+                        <thead>
+                            <tr>
+                                <th style="width: 10%"></th>
+                                <th style="width: 30%">Field</th>
+                                <th style="width: 10%"></th>
+                                <th style="width: 30%">Filter</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="rule-container">
+                                <td>
+                                    <select class="form-control" style="display: none;">
+                                        <option>And</option>
+                                        <option>Or</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" required="required"><option value="">Please Choose</option><option value="">Customer Records &gt; Customer ID</option><option value="">Customer Records &gt; Customer Data</option><option value="">Customer Records &gt; Address</option></select>
+                                    </div>
+                                </td>
+                                <td data-bind="with: Field"></td>
+                                <td data-bind="with: Field"></td>
+                                <td>
+                                    <span data-bind="visible: Field() &amp;&amp; Field().forced" class="badge badge-info" style="display: none;">Required Filter</span>
+                                    <button class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
+                                    <!-- ko if: Field() && Field().fieldType == 'DateTime' && Operator() == 'range' && $root.canAddSeries() && $index()==0 --><!--/ko -->
+                                </td>
+                            </tr>
+                            <!-- ko foreach: compareTo --><!-- /ko -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
