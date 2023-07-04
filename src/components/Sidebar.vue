@@ -23,7 +23,6 @@ function onDragStart(event, nodeType) {
             <div class="nodes p-2 ms-4">
               <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event, 'Table One')" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample1">
                 Table One
-                <img src="../../public/images/plus.png" height="20" width="20" alt="">
               </button>
             </div>
             <div class="collapse ms-5 pe-2" id="collapseExample1">
@@ -42,7 +41,6 @@ function onDragStart(event, nodeType) {
             <div class="nodes p-2 ms-4">
               <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event, 'Table Two')" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">
                 Table Two
-                <img src="../../public/images/plus.png" height="20" width="20" alt="">
               </button>
             </div>
             <div class="collapse ms-5 pe-2" id="collapseExample2">
@@ -67,9 +65,8 @@ function onDragStart(event, nodeType) {
         </h2>
         <div id="flush-collapseTwo" class="accordion-collapse collapse py-2" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
           <div class="nodes p-2 ms-4">
-            <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex flex-column" :draggable="true" @dragstart="onDragStart($event, 'View One')" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample3" aria-expanded="false" aria-controls="collapseExample3">
+            <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event, 'View One')" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample3" aria-expanded="false" aria-controls="collapseExample3">
               View One
-              <img src="../../public/images/plus.png" height="20px" width="20px" alt="">
             </button>
           </div>
           <div class="collapse ms-5 pe-2" id="collapseExample3">
@@ -93,10 +90,10 @@ function onDragStart(event, nodeType) {
         </h2>
         <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
           <div class="d-flex flex-column justify-content-center align-items-center p-4">
-            <button type="button" class="btn-style btn btn-outline-light text-secondary mb-2 w-100">Data Model 1</button>
-            <button type="button" class="btn-style btn btn-outline-light text-secondary mb-2 w-100">Data Model 2</button>
-            <button type="button" class="btn-style btn btn-outline-light text-secondary mb-2 w-100">Data Model 3</button>
-            <button type="button" class="btn-style btn btn-outline-light text-secondary mb-2 w-100">Data Model 4</button>
+            <button type="button" class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex flex-row  w-100 mb-2">Data Model 1</button>
+            <button type="button" class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex flex-row w-100 mb-2">Data Model 2</button>
+            <button type="button" class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex flex-row w-100 mb-2">Data Model 3</button>
+            <button type="button" class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex flex-row w-100 mb-2">Data Model 4</button>
           </div>
         </div>
       </div>

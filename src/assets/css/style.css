@@ -1346,3 +1346,28 @@ input[type="search"]::-webkit-search-results-decoration {
 .vue-flow__node-input, .vue-flow__node-default, .vue-flow__node-output {
   border-color: transparent;
 }
+
+.vue-flow__node-input::after {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-left: auto;
+  content: "";
+  background-image: url(../../../public/images/plus.png);
+  background-repeat: no-repeat;
+  background-size: 1.25rem;
+  transition: transform 0.2s ease-in-out;
+}
+
+.vue-flow__node-input:not(.collapsed)::after {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-left: auto;
+  content: "";
+  background-image: url(../../../public/images/minus.png);
+  background-repeat: no-repeat;
+  background-size: 1.25rem;
+  transition: transform 0.2s ease-in-out;
+  transform: rotate(-180deg);
+}
