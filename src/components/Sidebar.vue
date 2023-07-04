@@ -5,6 +5,8 @@ function onDragStart(event, nodeType) {
     event.dataTransfer.effectAllowed = 'move'
   }
 }
+
+let plusSign = false;
 </script>
 
 <template>
@@ -21,9 +23,9 @@ function onDragStart(event, nodeType) {
         <div id="flush-collapseOne" class="accordion-collapse collapse py-2" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
           <div>
             <div class="nodes p-2 ms-4">
-              <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event, 'Table One')" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample1">
+              <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :class="['collapsed' ? plusSign = true : plusSign = false]" :draggable="true" @dragstart="onDragStart($event, 'Table One')" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample1">
                 Table One
-                <img src="../../public/images/plus.png" height="20" width="20" alt="">
+                <img :src="plusSign === true ? '../../public/images/plus.png' : '../../public/images/minus.png'" height="20" width="20" alt="">
               </button>
             </div>
             <div class="collapse ms-5 pe-2" id="collapseExample1">
