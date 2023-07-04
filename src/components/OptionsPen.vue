@@ -1,6 +1,6 @@
 <template>
     <div class="card p-1 shadow w-100">
-        <h2 class="text-center p-3">Option pen</h2>
+        <!-- <h2 class="text-center p-3">Option pen</h2> -->
         <nav>
             <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
                 <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Filters</button>

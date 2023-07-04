@@ -1256,7 +1256,7 @@ input[type="search"]::-webkit-search-results-decoration {
 /* table map */
 
 .vue-flow {
-  height: 100vh;
+  height: 62vh;
 }
 .vue-flow__minimap {
   transform: scale(75%);
@@ -1323,6 +1323,8 @@ input[type="search"]::-webkit-search-results-decoration {
 
 .dndflow aside .nodes > * {
   width: 100%;
+  margin-bottom: 0px;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 }
 
 .accordion-button:focus {
@@ -1339,4 +1341,8 @@ input[type="search"]::-webkit-search-results-decoration {
 
 .accordion-button:not(.collapsed)::after {
   background-image: url(../../../public/images/minus.png);
+}
+
+.vue-flow__node-input, .vue-flow__node-default, .vue-flow__node-output {
+  border-color: transparent;
 }

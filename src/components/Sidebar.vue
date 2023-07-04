@@ -11,13 +11,6 @@ function onDragStart(event, nodeType) {
   <aside>
     <div class="description text-secondary">You can drag these nodes to the pane.</div>
 
-    <!-- <div class="nodes">
-      <div class="vue-flow__node-input" :draggable="true" @dragstart="onDragStart($event, 'input')">Input Node</div>
-
-      <div class="vue-flow__node-default" :draggable="true" @dragstart="onDragStart($event, 'default')">Default Node</div>
-
-      <div class="vue-flow__node-output" :draggable="true" @dragstart="onDragStart($event, 'output')">Output Node</div>
-    </div> -->
     <div class="accordion accordion-flush" id="accordionFlushExample">
       <div class="accordion-item mb-2">
         <h2 class="accordion-header" id="flush-headingOne">
@@ -25,29 +18,70 @@ function onDragStart(event, nodeType) {
             Tables
           </button>
         </h2>
-        <div id="flush-collapseOne" class="accordion-collapse collapse" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-          <div class="nodes p-4">
-            <div class="vue-flow__node-input" :draggable="true" @dragstart="onDragStart($event, 'Table One')">Table One</div>
-
-            <div class="vue-flow__node-default" :draggable="true" @dragstart="onDragStart($event, 'Table Two')">Table Two</div>
-
-            <div class="vue-flow__node-output" :draggable="true" @dragstart="onDragStart($event, 'Tables Three')">Tables Three</div>
+        <div id="flush-collapseOne" class="accordion-collapse collapse py-2" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
+          <div>
+            <div class="nodes p-2 ms-4">
+              <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event, 'Table One')" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample1">
+                Table One
+                <img src="../../public/images/plus.png" height="20" width="20" alt="">
+              </button>
+            </div>
+            <div class="collapse ms-5 pe-2" id="collapseExample1">
+              <button class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex flex-row w-100 mb-2" type="button">
+                Column One
+              </button>
+              <button class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex flex-row w-100 mb-2" type="button">
+                Column Two
+              </button>
+              <button class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex flex-row w-100 mb-2" type="button">
+                Column Three
+              </button>
+            </div>
+          </div>
+          <div>
+            <div class="nodes p-2 ms-4">
+              <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event, 'Table Two')" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">
+                Table Two
+                <img src="../../public/images/plus.png" height="20" width="20" alt="">
+              </button>
+            </div>
+            <div class="collapse ms-5 pe-2" id="collapseExample2">
+              <button class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex flex-row w-100 mb-2" type="button">
+                Column One
+              </button>
+              <button class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex flex-row w-100 mb-2" type="button">
+                Column Two
+              </button>
+              <button class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex flex-row w-100 mb-2" type="button">
+                Column Three
+              </button>
+            </div>
           </div>
         </div>
       </div>
       <div class="accordion-item mb-2">
         <h2 class="accordion-header" id="flush-headingTwo">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseOTwo">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
             Views
           </button>
         </h2>
-        <div id="flush-collapseTwo" class="accordion-collapse collapse" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
-          <div class="nodes p-4">
-            <div class="vue-flow__node-input" :draggable="true" @dragstart="onDragStart($event, 'Table One')">View One</div>
-
-            <div class="vue-flow__node-default" :draggable="true" @dragstart="onDragStart($event, 'Table Two')">View Two</div>
-
-            <div class="vue-flow__node-output" :draggable="true" @dragstart="onDragStart($event, 'Tables Three')">View Three</div>
+        <div id="flush-collapseTwo" class="accordion-collapse collapse py-2" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+          <div class="nodes p-2 ms-4">
+            <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex flex-column" :draggable="true" @dragstart="onDragStart($event, 'View One')" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample3" aria-expanded="false" aria-controls="collapseExample3">
+              View One
+              <img src="../../public/images/plus.png" height="20px" width="20px" alt="">
+            </button>
+          </div>
+          <div class="collapse ms-5 pe-2" id="collapseExample3">
+            <button class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex flex-row w-100 mb-2" type="button">
+              Column One
+            </button>
+            <button class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex flex-row w-100 mb-2" type="button">
+              Column Two
+            </button>
+            <button class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex flex-row w-100 mb-2" type="button">
+              Column Three
+            </button>
           </div>
         </div>
       </div>
