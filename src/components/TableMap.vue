@@ -3,6 +3,7 @@ import { Background } from '@vue-flow/background'
 import { Panel, PanelPosition, VueFlow, useVueFlow } from '@vue-flow/core'
 import { nextTick, watch } from 'vue'
 import Sidebar from './Sidebar.vue'
+import OptionsPen from './OptionsPen.vue'
 import { ref } from 'vue'
 
 let tables = ref([])
@@ -77,6 +78,7 @@ function onDrop(event) {
       },
       { deep: true, flush: 'post' },
     )
+    console.log(node);
   })
 }
 </script>
@@ -84,16 +86,19 @@ function onDrop(event) {
 <template>
   <div class="dndflow" @drop="onDrop">
     <Sidebar />
-    <VueFlow v-model="tables" @dragover="onDragOver" >
-        <Panel :position="PanelPosition.TopRight" class="controls">
-            <button style="background-color: #113285; color: white" title="Reset Transform" @click="resetTransform">
-                <svg width="16" height="16" viewBox="0 0 32 32">
-                <path fill="#FFFFFB" d="M18 28A12 12 0 1 0 6 16v6.2l-3.6-3.6L1 20l6 6l6-6l-1.4-1.4L8 22.2V16a10 10 0 1 1 10 10Z" />
-                </svg>
-            </button>
-        </Panel>
-        <Background/>
-    </VueFlow>
+    <div class="d-flex flex-column justify-content-center align-items-center w-100">
+      <VueFlow v-model="tables" @dragover="onDragOver" >
+            <Panel :position="PanelPosition.TopRight" class="controls">
+                <button style="background-color: #113285; color: white" title="Reset Transform" @click="resetTransform">
+                    <svg width="16" height="16" viewBox="0 0 32 32">
+                        <path fill="#FFFFFB" d="M18 28A12 12 0 1 0 6 16v6.2l-3.6-3.6L1 20l6 6l6-6l-1.4-1.4L8 22.2V16a10 10 0 1 1 10 10Z" />
+                    </svg>
+                </button>
+            </Panel>
+            <Background/>  
+        </VueFlow>
+      <OptionsPen />
+    </div>
   </div>
 </template>
 <style scoped>
