@@ -1,7 +1,7 @@
 <template>
   <div class="container my-4">
     <div class="d-flex justify-content-between align-items-center mt-2">
-      <router-link :to="{ name: 'table-map' }" class="text-decoration-none">
+      <router-link :to="{ name: 'table-map', query:{ id: id } }" class="text-decoration-none">
         <i class="fa-solid fa-arrow-left me-2"></i>Table Map
       </router-link>
       <div class="d-flex justify-content-center align-items-center">
@@ -84,6 +84,15 @@
 <script>
 export default {
   components:{
+   
+  },
+  computed: {
+    id(){
+      if (this.$route && this.$route.query) {
+        return this.$route.query.id
+      } 
+      return null;
+    }
   },
   data() {
     return {

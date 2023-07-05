@@ -78,7 +78,8 @@ import axios from 'axios'
 export default {
   props:[
     'close',
-    'opLoader'
+    'opLoader',
+    'getConnectionList'
   ],
   data() {
     return {
@@ -126,6 +127,7 @@ export default {
       });
       if (success) {
         toastr.success(message);
+        await this.getConnectionList()
         this.close()
       } else {
         toastr.error(message);

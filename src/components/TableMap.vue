@@ -1,6 +1,6 @@
 <template>
   <div class="dndflow" @drop="onDrop">
-    <Sidebar />
+    <Sidebar :tables_list="tables_list" />
     <div class="d-flex flex-column justify-content-center align-items-center w-100" style="height: 100vh;">
       <VueFlow v-model="tables" @dragover="onDragOver" >
             <template #node-custom="{ data }">
@@ -8,9 +8,9 @@
             </template>
             <Panel :position="PanelPosition.TopRight" class="controls">
               <div class="d-flex justify-content-center align-items-center">
-                <button @click="$router.push({ name: 'preview'})" type="button" class="btn btn-outline-primary btn-sm me-2">
+                <router-link :to="{ name: 'preview', query:{ id: id } }" class="btn btn-outline-primary btn-sm me-2">
                   Preview
-                </button>
+                </router-link>
                 <button style="background-color: #113285; color: white" title="Reset Transform" @click="resetTransform">
                     <svg width="16" height="16" viewBox="0 0 32 32">
                         <path fill="#FFFFFB" d="M18 28A12 12 0 1 0 6 16v6.2l-3.6-3.6L1 20l6 6l6-6l-1.4-1.4L8 22.2V16a10 10 0 1 1 10 10Z" />
@@ -22,6 +22,7 @@
         </VueFlow>
       <OptionsPen />
     </div>
+    <spinner v-if="spin"></spinner>
   </div>
 </template>
 <script>
@@ -31,6 +32,7 @@ import { nextTick, watch } from 'vue'
 import Sidebar from './Sidebar.vue'
 import OptionsPen from './OptionsPen.vue'
 import ColorSelectorNode from './TableNode.vue'
+import spinner from './loader/spinner.vue'
 import axios from 'axios'
 import { ref } from 'vue'
 export default {
@@ -122,7 +124,8 @@ export default {
   },
   data() {
     return {
-      tables_list:[]
+      tables_list:[],
+      spin: false
     }
   },
   components:{
@@ -131,15 +134,28 @@ export default {
     Panel,
     OptionsPen,
     ColorSelectorNode,
+    spinner,
     Sidebar
   },
-  mounted() {
+  created() {
     this.getTablesList()
+  },
+  computed:{
+    id(){
+      if (this.$route && this.$route.query) {
+        return this.$route.query.id
+      } 
+      return null;
+    }
+
   },
   methods: {
     async getTablesList(){
-      const { data:{ data } } = await axios.get('/get-tables?connection_id='+this.$route.params.id);
+      this.spin=true;
+      const { data:{ data } } = await axios.get('/get-tables?connection_id='+this.id);
       this.tables_list = data;
+      this.spin=false;
+      
     }
   },
 }

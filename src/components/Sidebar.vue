@@ -1,12 +1,3 @@
-<script setup>
-function onDragStart(event, nodeType) {
-  if (event.dataTransfer) {
-    event.dataTransfer.setData('application/vueflow', nodeType)
-    event.dataTransfer.effectAllowed = 'move'
-  }
-}
-</script>
-
 <template>
   <aside>
     <!-- <div class="description text-secondary">You can drag these nodes to the pane.</div> -->
@@ -19,13 +10,13 @@ function onDragStart(event, nodeType) {
           </button>
         </h2>
         <div id="flush-collapseOne" class="accordion-collapse collapse py-2" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
-          <div>
-            <div class="nodes p-2 ms-4">
-              <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event, 'input')" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample1">
-                <i class="fa-solid fa-table me-2"></i>Table One
+          <template v-for="(tab, i) in tables_list" :key="i">
+            <div  class="nodes p-2 ms-4">
+              <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event, tab.table_name)" type="button" data-bs-toggle="collapse" :data-bs-target="`#collapseExample${i}`" aria-expanded="false" :aria-controls="`collapseExample${i}`">
+                <i class="fa-solid fa-table me-2"></i>{{tab.table_name}}
               </button>
             </div>
-            <div class="collapse ms-5 pe-2" id="collapseExample1">
+            <div class="collapse ms-5 pe-2" :id="`collapseExample${i}`">
               <button class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2" type="button">
                 <i class="fa-solid fa-diamond me-2"></i>Column One
               </button>
@@ -36,8 +27,8 @@ function onDragStart(event, nodeType) {
                 <i class="fa-solid fa-diamond me-2"></i>Column Three
               </button>
             </div>
-          </div>
-          <div>
+          </template>
+          <!-- <div>
             <div class="nodes p-2 ms-4">
               <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event, 'input')" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample2" aria-expanded="false" aria-controls="collapseExample2">
                 <i class="fa-solid fa-table me-2"></i>Table Two
@@ -54,7 +45,7 @@ function onDragStart(event, nodeType) {
                 <i class="fa-solid fa-diamond me-2"></i>Column Three
               </button>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
       <div class="accordion-item mb-2">
@@ -114,3 +105,21 @@ function onDragStart(event, nodeType) {
     </div>
   </aside>
 </template>
+<script>
+export default {
+  setup(){
+    function onDragStart(event, nodeType) {
+      if (event.dataTransfer) {
+        event.dataTransfer.setData('application/vueflow', nodeType)
+        event.dataTransfer.effectAllowed = 'move'
+      }
+    }
+    return {
+      onDragStart
+    }
+  },
+  props:[
+    'tables_list'
+  ]
+}
+</script>
