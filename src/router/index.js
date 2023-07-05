@@ -9,7 +9,7 @@ const baseUrl = process.env.VUE_APP_BASE_URL;
 const routes = [
   { path: baseUrl, component: ConnectionList, name: 'home', props: true },
   { path: baseUrl+'/create-connection', component: index, name: 'create-connection', props: true },
-  { path: baseUrl+'/table-map', component: TableMap, name: 'table-map', props: true },
+  { path: baseUrl+'/table-map/:id', component: TableMap, name: 'table-map', props: true },
   { path: baseUrl+'/pen', component: OptionsPen, name: 'pen', props: true },
 ];
 

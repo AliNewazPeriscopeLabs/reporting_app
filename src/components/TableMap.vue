@@ -1,89 +1,3 @@
-<script setup>
-import { Background } from '@vue-flow/background'
-import { Panel, PanelPosition, VueFlow, useVueFlow } from '@vue-flow/core'
-import { nextTick, watch } from 'vue'
-import Sidebar from './Sidebar.vue'
-import OptionsPen from './OptionsPen.vue'
-import ColorSelectorNode from './TableNode.vue'
-import { ref } from 'vue'
-
-let tables = ref([])
-let id = 0
-function getId() {
-  return `table_${id++}`
-}
-
-const { findNode, onConnect, addEdges, addNodes, project, vueFlowRef, $reset } = useVueFlow({
-  nodes: [
-    {
-      id: '1',
-      type: 'input',
-      label: 'input node',
-      position: { x: 250, y: 25 },
-    },
-  ],
-})
-
-function resetTransform() {
-  tables = [];
-  $reset();
-}
-function onDragOver(event) {
-  event.preventDefault()
-
-  if (event.dataTransfer) {
-    event.dataTransfer.dropEffect = 'move'
-  }
-}
-
-onConnect((params) =>{
-    // console.log(params);
-    addEdges({
-        ...params,
-        label: 'Inner-Join',
-        style: { stroke: 'orange' },
-        labelBgStyle: { fill: 'orange' },
-        type: 'custom',
-    })
-})
-
-function onDrop(event) {
-  const type = event.dataTransfer?.getData('application/vueflow')
-
-  const { left, top } = vueFlowRef.value.getBoundingClientRect()
-
-  const position = project({
-    x: event.clientX - left,
-    y: event.clientY - top,
-  })
-
-  const newNode = {
-    id: getId(),
-    type,
-    position,
-    label: `${type} node`,
-  }
-
-  addNodes([newNode])
-
-  // align node position after drop, so it's centered to the mouse
-  nextTick(() => {
-    const node = findNode(newNode.id)
-    const stop = watch(
-      () => node.dimensions,
-      (dimensions) => {
-        if (dimensions.width > 0 && dimensions.height > 0) {
-          node.position = { x: node.position.x - node.dimensions.width / 2, y: node.position.y - node.dimensions.height / 2 }
-          stop()
-        }
-      },
-      { deep: true, flush: 'post' },
-    )
-    console.log(node);
-  })
-}
-</script>
-
 <template>
   <div class="dndflow" @drop="onDrop">
     <Sidebar />
@@ -106,6 +20,126 @@ function onDrop(event) {
     </div>
   </div>
 </template>
+<script>
+import { Background } from '@vue-flow/background'
+import { Panel, PanelPosition, VueFlow, useVueFlow } from '@vue-flow/core'
+import { nextTick, watch } from 'vue'
+import Sidebar from './Sidebar.vue'
+import OptionsPen from './OptionsPen.vue'
+import ColorSelectorNode from './TableNode.vue'
+import axios from 'axios'
+import { ref } from 'vue'
+export default {
+  setup() {
+
+    let tables = ref([])
+    let id = 0
+    function getId() {
+      return `table_${id++}`
+    }
+
+    const { findNode, onConnect, addEdges, addNodes, project, vueFlowRef, $reset } = useVueFlow({
+      nodes: [
+        {
+          id: '1',
+          type: 'input',
+          label: 'input node',
+          position: { x: 250, y: 25 },
+        },
+      ],
+    })
+
+    function resetTransform() {
+      tables = [];
+      $reset();
+    }
+    function onDragOver(event) {
+      event.preventDefault()
+
+      if (event.dataTransfer) {
+        event.dataTransfer.dropEffect = 'move'
+      }
+    }
+
+    onConnect((params) =>{
+        // console.log(params);
+      addEdges({
+        ...params,
+        label: 'Inner-Join',
+        style: { stroke: 'orange' },
+        labelBgStyle: { fill: 'orange' },
+        type: 'custom',
+      })
+    })
+
+    function onDrop(event) {
+      const type = event.dataTransfer?.getData('application/vueflow')
+
+      const { left, top } = vueFlowRef.value.getBoundingClientRect()
+
+      const position = project({
+        x: event.clientX - left,
+        y: event.clientY - top,
+      })
+
+      const newNode = {
+        id: getId(),
+        type,
+        position,
+        label: `${type} node`,
+      }
+
+      addNodes([newNode])
+
+      // align node position after drop, so it's centered to the mouse
+      nextTick(() => {
+        const node = findNode(newNode.id)
+        const stop = watch(
+          () => node.dimensions,
+          (dimensions) => {
+            if (dimensions.width > 0 && dimensions.height > 0) {
+              node.position = { x: node.position.x - node.dimensions.width / 2, y: node.position.y - node.dimensions.height / 2 }
+              stop()
+            }
+          },
+          { deep: true, flush: 'post' },
+        )
+        console.log(node);
+      })
+    }
+
+    return {
+      tables,
+      resetTransform,
+      onDragOver,
+      onDrop,
+      PanelPosition
+    }
+  },
+  data() {
+    return {
+      tables_list:[]
+    }
+  },
+  components:{
+    Background,
+    VueFlow,
+    Panel,
+    OptionsPen,
+    ColorSelectorNode,
+    Sidebar
+  },
+  mounted() {
+    this.getTablesList()
+  },
+  methods: {
+    async getTablesList(){
+      const { data:{ data } } = await axios.get('/get-tables?connection_id='+this.$route.params.id);
+      this.tables_list = data;
+    }
+  },
+}
+</script>
 <style scoped>
     
 </style>
