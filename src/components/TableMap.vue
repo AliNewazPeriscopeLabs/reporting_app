@@ -79,11 +79,16 @@ function onDrop(event) {
     <div class="d-flex flex-column justify-content-center align-items-center w-100" style="height: 100vh;">
       <VueFlow v-model="tables" @dragover="onDragOver" >
         <Panel :position="PanelPosition.TopRight" class="controls">
-            <button style="background-color: #113285; color: white" title="Reset Transform" @click="resetTransform">
-                <svg width="16" height="16" viewBox="0 0 32 32">
-                <path fill="#FFFFFB" d="M18 28A12 12 0 1 0 6 16v6.2l-3.6-3.6L1 20l6 6l6-6l-1.4-1.4L8 22.2V16a10 10 0 1 1 10 10Z" />
-                </svg>
-            </button>
+            <div class="d-flex justify-content-center align-items-center">
+              <button @click="$router.push({ name: 'preview'})" type="button" class="btn btn-outline-primary btn-sm me-2">
+                Preview
+              </button>
+              <button style="background-color: #113285; color: white" title="Reset Transform" @click="resetTransform">
+                  <svg width="16" height="16" viewBox="0 0 32 32">
+                  <path fill="#FFFFFB" d="M18 28A12 12 0 1 0 6 16v6.2l-3.6-3.6L1 20l6 6l6-6l-1.4-1.4L8 22.2V16a10 10 0 1 1 10 10Z" />
+                  </svg>
+              </button>
+            </div>
         </Panel>
       </VueFlow>
       <OptionsPen />
