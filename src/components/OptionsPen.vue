@@ -1,5 +1,5 @@
 <template>
-    <div class=" w-100">
+    <div class=" w-100 min-height card shadow-style">
         <!-- <h2 class="text-center p-3">Option pen</h2> -->
         <nav>
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -211,5 +211,7 @@ export default {
 .query-builder .rules-list > :last-child::after {
     display: none
 }
-
+.min-height{
+    min-height: 223px !important;
+}
 </style>

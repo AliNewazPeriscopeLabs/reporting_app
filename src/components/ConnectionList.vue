@@ -1,7 +1,7 @@
 <template>
   <div class="container my-5">
     <div class="row">
-      <span @click="$router.push({ name: 'create-connection'})" class="add"> +  Add </span>
+      <span @click="createCon = true" class="add"> +  Add </span>
     </div>
     <div class="row">
       <div class="col-md-4  p-0">
@@ -84,16 +84,28 @@
         </div>
       </div> -->
     </div>
+    <ConnectionCreate 
+      v-if="createCon"
+      :close="close"
+      :opLoader="opLoader"
+    ></ConnectionCreate>
+    <spinner v-if="loader"></spinner>
 </div>
 </template>
   
 <script>
 // import axios from 'axios'
+import ConnectionCreate from './modal/ConnectionCreate.vue'
+import spinner from './loader/spinner.vue';
 export default {
   components:{
+    ConnectionCreate,
+    spinner
   },
   data() {
     return {
+      createCon: false,
+      loader: false
     }
   },
   created() {
@@ -103,6 +115,12 @@ export default {
   watch: {
   },
   methods: {
+    close(){
+      this.createCon = false;
+    },
+    opLoader(flag = false){
+      this.loader = flag;
+    }
   }
 }
 </script>
