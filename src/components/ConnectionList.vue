@@ -5,7 +5,7 @@
     </div>
     <div class="row">
       <div class="col-md-4  p-0">
-        <div class="card mt-5" style="width: 18rem;">
+        <div class="card mt-5 shadow" style="width: 18rem;">
           <div class="card-body">
             <h5 class="card-title">Connection Name</h5>
             <div class="d-flex">
@@ -21,7 +21,7 @@
         </div>
       </div>
       <div class="col-md-4  p-0">
-        <div class="card mt-5" style="width: 18rem;">
+        <div class="card mt-5 shadow" style="width: 18rem;">
           <div class="card-body">
             <h5 class="card-title">Connection Name</h5>
             <div class="d-flex">
@@ -37,7 +37,7 @@
         </div>
       </div>
       <div class="col-md-4  p-0">
-        <div class="card mt-5" style="width: 18rem;">
+        <div class="card mt-5 shadow" style="width: 18rem;">
           <div class="card-body">
             <h5 class="card-title">Connection Name</h5>
             <div class="d-flex">
@@ -53,7 +53,7 @@
         </div>
       </div>
       <div class="col-md-4  p-0">
-        <div class="card mt-5" style="width: 18rem;">
+        <div class="card mt-5 shadow" style="width: 18rem;">
           <div class="card-body">
             <h5 class="card-title">Connection Name</h5>
             <div class="d-flex">
