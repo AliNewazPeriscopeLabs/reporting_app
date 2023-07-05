@@ -126,7 +126,7 @@ body {
   z-index: 10000;
 }
 
-#toast-container>div {
+/* #toast-container>div {
   width: 350px;
   height: 56px;
   display: flex;
@@ -134,7 +134,7 @@ body {
   justify-content: space-between;
   align-items: center;
   box-shadow: none !important;
-}
+} */
 
 #toast-container>div:hover {
   box-shadow: none !important;
@@ -163,9 +163,9 @@ body {
   left: 12%;
 }
 
-.toast-success {
+/* .toast-success {
   background-color: #e9f7da !important;
-}
+} */
 
 .toast-success .toast-message {
   color: #006B00;
@@ -200,7 +200,6 @@ body {
 
 button.toast-close-button {
   color: #1F1F1F;
-  ;
   margin-top: 7px;
 }
 
