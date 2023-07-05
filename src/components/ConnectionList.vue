@@ -4,15 +4,15 @@
       <span @click="createCon = true" class="add"> +  Add </span>
     </div>
     <div class="row">
-      <div class="col-md-4  p-0">
+      <div v-for="(item , i) in connections" :key="i" class="col-md-4  p-0">
         <div class="card mt-5" style="width: 18rem;">
           <div class="card-body">
-            <h5 class="card-title">Connection Name</h5>
+            <h5 class="card-title">{{item.connection_name}}</h5>
             <div class="d-flex">
-              <i class="fa-solid fa-user  p-05 fs-12"></i> <p class="card-text">User name</p>
+              <i class="fa-solid fa-user  p-05 fs-12"></i> <p class="card-text">{{item.default_db}}</p>
             </div>
             <div class="d-flex">
-              <i class="fas fa-wave-square p-05 fs-12"></i><p class="card-text">Host:port</p>
+              <i class="fas fa-wave-square p-05 fs-12"></i><p class="card-text">{{item.host_name}}:{{item.host_port}}</p>
             </div>
             <div class="d-flex justify-content-center mt-3">
               <router-link to="/table-map" class="btn btn-primary w-100">Connect</router-link>
@@ -20,69 +20,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-4  p-0">
-        <div class="card mt-5" style="width: 18rem;">
-          <div class="card-body">
-            <h5 class="card-title">Connection Name</h5>
-            <div class="d-flex">
-              <i class="fa-solid fa-user  p-05 fs-12"></i> <p class="card-text">User name</p>
-            </div>
-            <div class="d-flex">
-              <i class="fas fa-wave-square p-05 fs-12"></i><p class="card-text">Host:port</p>
-            </div>
-            <div class="d-flex justify-content-center mt-3">
-              <router-link to="/" class="btn btn-primary w-100">Connect</router-link>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4  p-0">
-        <div class="card mt-5" style="width: 18rem;">
-          <div class="card-body">
-            <h5 class="card-title">Connection Name</h5>
-            <div class="d-flex">
-              <i class="fa-solid fa-user  p-05 fs-12"></i> <p class="card-text">User name</p>
-            </div>
-            <div class="d-flex">
-              <i class="fas fa-wave-square p-05 fs-12"></i><p class="card-text">Host:port</p>
-            </div>
-            <div class="d-flex justify-content-center mt-3">
-              <router-link to="/" class="btn btn-primary w-100">Connect</router-link>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="col-md-4  p-0">
-        <div class="card mt-5" style="width: 18rem;">
-          <div class="card-body">
-            <h5 class="card-title">Connection Name</h5>
-            <div class="d-flex">
-              <i class="fa-solid fa-user  p-05 fs-12"></i> <p class="card-text">User name</p>
-            </div>
-            <div class="d-flex">
-              <i class="fas fa-wave-square p-05 fs-12"></i><p class="card-text">Host:port</p>
-            </div>
-            <div class="d-flex justify-content-center mt-3">
-              <router-link to="/" class="btn btn-primary w-100">Connect</router-link>
-            </div>
-          </div>
-        </div>
-      </div>
      
-      <!-- <div class="col-md-3 mt-3 p-2">
-        <div class="card" style="width: 18rem;">
-          <div class="card-body">
-            <h5 class="card-title">Connection Name</h5>
-            <div class="d-flex">
-              <i class="fa-solid fa-user  p-05 fs-12"></i> <p class="card-text">User name</p>
-            </div>
-            <div class="d-flex">
-              <i class="fas fa-wave-square p-05 fs-12"></i><p class="card-text">Host:port</p>
-            </div>
-            <router-link to="/" class="btn btn-primary">Connect</router-link>
-          </div>
-        </div>
-      </div> -->
     </div>
     <ConnectionCreate 
       v-if="createCon"
@@ -97,7 +35,22 @@
 // import axios from 'axios'
 import ConnectionCreate from './modal/ConnectionCreate.vue'
 import spinner from './loader/spinner.vue';
+import { onMounted, ref } from 'vue'
+import axios from 'axios';
 export default {
+  setup(){
+    let connections = ref([]);
+    onMounted( ()=>{
+      getConnectionList()
+    })
+    async function getConnectionList(){
+      const { data:{ data } } = await axios.get('/get-connection-list');
+      connections.value = data;
+    }
+    return{
+      connections
+    }
+  },
   components:{
     ConnectionCreate,
     spinner
