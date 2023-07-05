@@ -1,11 +1,24 @@
 <template>
   <div class="container my-5">
-    <div class="row">
-      <span @click="createCon = true" class="add"> +  Add </span>
+    <div class="row text-center">
+      <h2 class="data-title">Welcome to SQL Report Builder</h2>
+      <span class="data-desc">
+        SQL Report Builder is the graphical user interface (GUI) tool for Report Building. It lets you design your report SQL queries.
+        Allows designing and executing SQL queries to work and save as Data Models.
+        You can use the intuitive and user friendly Report Builder to create many types of Reports.
+      </span>
+      <!-- <span @click="createCon = true" class="add"> +  Add </span> -->
+    </div>
+    <div class="d-flex align-items-center mt-5">
+      <h4 class="me-3">SQL Connections</h4>
+      <span @click="createCon = true" class="add" title="Create Connection">+</span>
     </div>
     <div class="row">
       <div v-for="(item , i) in connections" :key="i" class="col-md-4  p-0">
-        <div class="card shadow mt-5" style="width: 18rem;">
+        <div class="card mt-3 shadow" :class="[item.connection_type === 'mysql' ? 'mysql-logo' : 'pg-logo']" style="width: 18rem;">
+          <button class="btn btn-outline-danger rounded-pill d-flex justify-content-center align-items-center" style="position: absolute; right: 15px; width: 30px; height: 30px;" title="Remove Connection">
+            <i class="fa-solid fa-xmark x-mark"></i>
+          </button>
           <div class="card-body">
             <h5 class="card-title">{{item.connection_name}}</h5>
             <div class="d-flex">
@@ -89,22 +102,48 @@ export default {
   padding: 1rem;
 }
 
+.mysql-logo {
+  background-image: url(../../public/images/mysql.png);
+  background-repeat: no-repeat;
+  background-size: 7rem;
+  background-position-x: right;
+}
+
+.pg-logo {
+  background-image: url(../../public/images/pgsql.png);
+  background-repeat: no-repeat;
+  background-size: 7rem;
+  background-position-x: right;
+}
+
 // span{
 // }
 
 .add{
-  display: inline-block;
-  width: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   height: 30px;
   font-size: 40px;
+  font-weight: 700;
   font-family: "Roboto";
-  border-radius: 50%;
   background: #FFF;
-  border-radius: 60px;
-  width: 78px;
+  border-radius: 50%;
+  width: 30px;
   box-shadow: 0 0 5px 0 #A0D468;
   font-size: 20px;
   cursor: pointer;
+}
+.x-mark{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  font-size: 40px;
+  font-weight: 700;
+  border-radius: 50%;
+  width: 30px;
+  font-size: 20px;
 }
 
 // .add:after{
@@ -121,5 +160,23 @@ export default {
   display: inline;
 }
 
+.data-title{
+  font-style: normal;
+  font-weight: 700;
+  font-size: 35.16px;
+  line-height: 24px;
+  color: #6f6b6b;
+  margin-top: 24px;
+  margin-bottom: 36px;
+}
+.data-desc{
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16.8px;
+  line-height: 24px;
+  color: #949494;
+  margin-top: 6px;
+  text-align: center;
+}
 
 </style>
