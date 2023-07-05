@@ -4,20 +4,29 @@
       <router-link :to="{ name: 'table-map' }" class="text-decoration-none">
         <i class="fa-solid fa-arrow-left me-2"></i>Table Map
       </router-link>
-      <div class="dropdown">
-        <button class="btn btn-outline-primary btn-sm fw-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          Export
+      <div class="d-flex justify-content-center align-items-center">
+        <button type="button" class="btn btn-outline-primary btn-sm shadow-none me-2">
+          <i class="fa-solid fa-floppy-disk me-2"></i>Save
         </button>
-        <div class="dropdown-menu">
-          <button class="dropdown-item fw-light" type="button">PDF</button>
-          <button class="dropdown-item fw-light" type="button">EXCEL</button>
-          <button class="dropdown-item fw-light" type="button">CSV</button>
+        <div class="dropdown">
+          <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa-solid fa-download me-2"></i>Export
+          </button>
+          <div class="dropdown-menu">
+            <button class="dropdown-item fw-light" type="button">PDF</button>
+            <button class="dropdown-item fw-light" type="button">EXCEL</button>
+            <button class="dropdown-item fw-light" type="button">CSV</button>
+          </div>
         </div>
       </div>
     </div>
     <div class="mt-3">
-      <h5 class="fw-normal">Report Name</h5>
-      <p class=" fw-normal">Report Description</p>
+      <h5 class="fw-normal">
+        <i class="fa-solid fa-file-invoice me-2"></i>Report Name
+      </h5>
+      <p class=" fw-normal">
+        <i class="fa-solid fa-clipboard me-2"></i>Report Description
+      </p>
     </div>
     <hr style="margin-top: 30px;">
     <div>

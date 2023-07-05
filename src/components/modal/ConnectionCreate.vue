@@ -13,7 +13,7 @@
                     <div class="col-12">
                       <label for="db-type" class="form-label">Database Type</label>
                       <select v-model="connection_type"  class="form-control form-select" name="db-type" id="db-type" required>
-                        <option selected >Select Db type</option>
+                        <option value="" disabled selected>Select DB type</option>
                         <option value="mysql">MySQL</option>
                         <option value="postgres">PostGRES</option>
                       </select>
@@ -24,7 +24,7 @@
                     </div>
                     <div class="col-md-6">
                       <label for="port-no" class="form-label">Port No:</label>
-                      <input v-model="port" type="text" class="form-control" id="port-no" name="port-no" required>
+                      <input v-model="port" type="number" class="form-control" id="port-no" name="port-no" required>
                     </div>
                     <div class="col-md-6">
                       <label for="user-name" class="form-label">User name:</label>
