@@ -13,9 +13,15 @@
             <i class="fa-solid fa-download me-2"></i>Export
           </button>
           <div class="dropdown-menu">
-            <button class="dropdown-item fw-light" type="button">PDF</button>
-            <button class="dropdown-item fw-light" type="button">EXCEL</button>
-            <button class="dropdown-item fw-light" type="button">CSV</button>
+            <button class="dropdown-item fw-light" type="button">
+              <i class="fa-solid fa-file-pdf me-2"></i>PDF
+            </button>
+            <button class="dropdown-item fw-light" type="button">
+              <i class="fa-solid fa-file-excel me-2"></i>EXCEL
+            </button>
+            <button class="dropdown-item fw-light" type="button">
+              <i class="fa-solid fa-file-csv me-2"></i>CSV
+            </button>
           </div>
         </div>
       </div>
