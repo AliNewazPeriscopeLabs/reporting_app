@@ -5,7 +5,7 @@
     </div>
     <div class="row">
       <div v-for="(item , i) in connections" :key="i" class="col-md-4  p-0">
-        <div class="card mt-5" style="width: 18rem;">
+        <div class="card shadow mt-5" style="width: 18rem;">
           <div class="card-body">
             <h5 class="card-title">{{item.connection_name}}</h5>
             <div class="d-flex">

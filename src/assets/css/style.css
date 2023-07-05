@@ -232,7 +232,7 @@ button.toast-close-button {
   width: 100%;
 }
 
-.dropdown-toggle {
+/* .dropdown-toggle {
   padding: 0px 0px 6px 10px;
 }
 
@@ -258,6 +258,19 @@ button.toast-close-button {
   border: 1px solid #BBBBBB;
   display: block;
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.15);
+} */
+
+.dropdown-toggle {
+  box-shadow: none !important;
+}
+
+.dropdown-menu {
+  min-width: 4rem !important;
+  padding: 0px !important;
+}
+
+.dropdown-item {
+  padding: 0.25rem 1.85rem !important;
 }
 
 .show {
