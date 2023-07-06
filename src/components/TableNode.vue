@@ -15,18 +15,20 @@ import { Handle, Position } from '@vue-flow/core'
             All
         </label>
     </div>
-    <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="columnOne">
-        <label class="form-check-label" for="columnOne">
-            Column One
-        </label>
-    </div>
-    <div class="form-check">
+    <template v-if="columns[data.table_name]?.length">
+      <div v-for="(col, i) in columns[data.table_name]" :key="i" class="form-check">
+          <input class="form-check-input" type="checkbox" value="" :id="`${data.table_name}_${col.column_name}_${i}`">
+          <label class="form-check-label" :for="`${data.table_name}_${col.column_name}_${i}`">
+              {{ col.column_name }}
+          </label>
+      </div>      
+    </template>
+    <!-- <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="columnTwo" checked>
         <label class="form-check-label" for="columnTwo">
             Column Two
         </label>
-    </div>
+    </div> -->
   </div>
 
   <Handle id="a" type="source" :position="Position.Right"  />
@@ -35,7 +37,8 @@ import { Handle, Position } from '@vue-flow/core'
 <script>
 export default {
   props:[
-    'data'
+    'data',
+    'columns',
   ]
 }
 </script>

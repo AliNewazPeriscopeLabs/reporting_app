@@ -1,14 +1,20 @@
 <template>
   <div class="dndflow" @drop="onDrop">
-    <Sidebar :tables_list="tables_list" />
+    <Sidebar 
+      :tables_list="tables_list"
+      :getColumns="getColumns" 
+      :columns="columns"
+    />
     <div class="d-flex flex-column justify-content-center align-items-center w-100" style="height: 100vh;">
       <VueFlow 
         v-model="tables" 
         @dragover="onDragOver"
-        
       >
         <template #node-custom="{ data }">
-            <ColorSelectorNode :data="data"  />
+          <TableNode 
+            :data="data"
+            :columns="columns"  
+          />
         </template>
         <Panel :position="PanelPosition.TopRight" class="controls">
           <div class="d-flex justify-content-center align-items-center">
@@ -40,7 +46,7 @@ import { Panel, PanelPosition, VueFlow, useVueFlow } from '@vue-flow/core'
 import { nextTick, watch } from 'vue'
 import Sidebar from './Sidebar.vue'
 import OptionsPen from './OptionsPen.vue'
-import ColorSelectorNode from './TableNode.vue'
+import TableNode from './TableNode.vue'
 import JoinModal from './modal/JoinModal.vue'
 import spinner from './loader/spinner.vue'
 import axios from 'axios'
@@ -89,60 +95,24 @@ export default {
       })
     })
 
-
-    function onDrop(event) {
-      const type = event.dataTransfer?.getData('application/vueflow')
-      const tableName = event.dataTransfer?.getData('application/table')
-
-      const { left, top } = vueFlowRef.value.getBoundingClientRect()
-
-      const position = project({
-        x: event.clientX - left,
-        y: event.clientY - top,
-      })
-
-      const newNode = {
-        id: getId(),
-        type: 'custom',
-        data:{
-          table_name: tableName
-        },
-        position,
-        label: `${type} node`,
-      }
-
-      addNodes([newNode])
-
-      // align node position after drop, so it's centered to the mouse
-      nextTick(() => {
-        const node = findNode(newNode.id)
-        const stop = watch(
-          () => node.dimensions,
-          (dimensions) => {
-            if (dimensions.width > 0 && dimensions.height > 0) {
-              node.position = { x: node.position.x - node.dimensions.width / 2, y: node.position.y - node.dimensions.height / 2 }
-              stop()
-            }
-          },
-          { deep: true, flush: 'post' },
-        )
-        // console.log(node);
-      })
-    }
-
     return {
       tables,
       resetTransform,
       onDragOver,
-      onDrop,
       joinModal,
-      PanelPosition
+      PanelPosition,
+      findNode,
+      addNodes,
+      project,
+      vueFlowRef,
+      getId
     }
   },
   data() {
     return {
       tables_list:[],
-      spin: false
+      spin: false,
+      columns:{}
     }
   },
   components:{
@@ -150,7 +120,7 @@ export default {
     VueFlow,
     Panel,
     OptionsPen,
-    ColorSelectorNode,
+    TableNode,
     spinner,
     JoinModal,
     Sidebar
@@ -168,6 +138,47 @@ export default {
 
   },
   methods: {
+    async onDrop(event) {
+      const type = event.dataTransfer?.getData('application/vueflow')
+      const tableName = event.dataTransfer?.getData('application/table')
+
+      const { left, top } = this.vueFlowRef.getBoundingClientRect()
+
+      const position = this.project({
+        x: event.clientX - left,
+        y: event.clientY - top,
+      })
+      if (!this.columns[tableName]?.length) {
+        await this.getColumns(tableName)
+      }
+      const newNode = {
+        id: this.getId(),
+        type: 'custom',
+        data:{
+          table_name: tableName
+        },
+        position,
+        label: `${type} node`,
+      }
+
+      this.addNodes([newNode])
+
+      // align node position after drop, so it's centered to the mouse
+      nextTick(() => {
+        const node = this.findNode(newNode.id)
+        const stop = watch(
+          () => node.dimensions,
+          (dimensions) => {
+            if (dimensions.width > 0 && dimensions.height > 0) {
+              node.position = { x: node.position.x - node.dimensions.width / 2, y: node.position.y - node.dimensions.height / 2 }
+              stop()
+            }
+          },
+          { deep: true, flush: 'post' },
+        )
+        // console.log(node);
+      })
+    },
     removeJoin(){
       this.joinModal = false;
       this.tables.pop();
@@ -182,6 +193,13 @@ export default {
       this.tables_list = data;
       this.spin=false;
       
+    },
+    async getColumns(table){
+      this.spin=true;
+      const {data:{data}} = await axios.get(`get-columns?connection_id=${this.id}&table_name=${table}`)
+      // console.log(data);
+      this.columns[table] = data
+      this.spin=false;
     }
   },
 }

@@ -1,7 +1,5 @@
 <template>
   <aside>
-    <!-- <div class="description text-secondary">You can drag these nodes to the pane.</div> -->
-
     <div class="accordion accordion-flush" id="accordionFlushExample">
       <div class="accordion-item mb-2">
         <h2 class="accordion-header" id="flush-headingOne">
@@ -12,11 +10,18 @@
         <div id="flush-collapseOne" class="accordion-collapse collapse py-2" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
           <template v-for="(tab, i) in tables_list" :key="i">
             <div  class="nodes p-2 ms-4">
-              <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event,'custom', tab.tablename)" type="button" data-bs-toggle="collapse" :data-bs-target="`#collapseExample${i}`" aria-expanded="false" :aria-controls="`collapseExample${i}`">
+              <button @click="!columns[tab.tablename] ? getColumns(tab.tablename) : ''" class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event,'custom', tab.tablename)" type="button" data-bs-toggle="collapse" :data-bs-target="`#collapseExample${i}`" aria-expanded="false" :aria-controls="`collapseExample${i}`">
                 <i class="fa-solid fa-table me-2"></i>{{tab.tablename}}
               </button>
             </div>
             <div class="collapse ms-5 pe-2" :id="`collapseExample${i}`">
+              <template v-if="columns[tab.tablename]?.length">
+                <button v-for="(item, i) in columns[tab.tablename]" :key="i" class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2" type="button">
+                  <i class="fa-solid fa-diamond me-2"></i>{{item.column_name}}
+                </button>
+              </template>
+            </div>
+            <!-- <div class="collapse ms-5 pe-2" :id="`collapseExample${i}`">
               <button class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2" type="button">
                 <i class="fa-solid fa-diamond me-2"></i>Column One
               </button>
@@ -26,7 +31,7 @@
               <button class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2" type="button">
                 <i class="fa-solid fa-diamond me-2"></i>Column Three
               </button>
-            </div>
+            </div> -->
           </template>
           <!-- <div>
             <div class="nodes p-2 ms-4">
@@ -120,7 +125,11 @@ export default {
     }
   },
   props:[
-    'tables_list'
-  ]
+    'tables_list',
+    'columns',
+    'getColumns'
+  ],
+  methods: {
+  },
 }
 </script>

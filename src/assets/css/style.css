@@ -1289,7 +1289,9 @@ input[type="search"]::-webkit-search-results-decoration {
   font-size: 12px;
   background: rgba(16, 185, 129, .75);
   -webkit-box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, .3);
-  box-shadow: 0 5px 10px #0000004d
+  box-shadow: 0 5px 10px #0000004d;
+  height: 100vh;
+  overflow-y: auto;
 }
 
 .dndflow aside .nodes>* {
