@@ -14,40 +14,43 @@
                     <table class="table table-hover table-borderless">
                         <thead>
                             <tr>
-                                <th style="width: 10%"></th>
                                 <th style="width: 30%">Field</th>
                                 <th style="width: 10%"></th>
                                 <th style="width: 30%">Filter</th>
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr class="rule-container">
-                                <td>
-                                    <select class="form-control" >
-                                        <option>And</option>
-                                        <option>Or</option>
-                                    </select>
-                                </td>
-                                <td>
-                                    <div class="form-group">
-                                        <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" required="required"><option value="">Please Choose</option><option value="">Customer Records &gt; Customer ID</option><option value="">Customer Records &gt; Customer Data</option><option value="">Customer Records &gt; Address</option></select>
-                                    </div>
-                                </td>
-                                <td data-bind="with: Field"></td>
-                                <td data-bind="with: Field"></td>
-                                <td>
-                                    <span data-bind="visible: Field() &amp;&amp; Field().forced" class="badge badge-info" style="display: none;">Required Filter</span>
-                                    <button class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
-                                    <!-- ko if: Field() && Field().fieldType == 'DateTime' && Operator() == 'range' && $root.canAddSeries() && $index()==0 --><!--/ko -->
-                                </td>
-                            </tr>
+                        <tbody v-for="(filter, index) in filters" :key="index">
+                                <tr class="rule-container">
+                                    <td>
+                                        <div class="form-group">
+                                            <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.value1" required="required"><option value="">Please Choose</option><option value="">Customer Records &gt; Customer ID</option><option value="">Customer Records &gt; Customer Data</option><option value="">Customer Records &gt; Address</option></select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <select class="form-control" v-model="filter.value2">
+                                            <option value="">=</option>
+                                            <option value="">></option>
+                                            <option value="">>=</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div class="form-group">
+                                            <input class="form-control" type="number" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.value3" required="required" />
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span data-bind="visible: Field() &amp;&amp; Field().forced" class="badge badge-info" style="display: none;">Required Filter</span>
+                                        <button @click="removeFilter(index)" class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
+                                        <!-- ko if: Field() && Field().fieldType == 'DateTime' && Operator() == 'range' && $root.canAddSeries() && $index()==0 --><!--/ko -->
+                                    </td>
+                                </tr>
                             <!-- ko foreach: compareTo --><!-- /ko -->
                         </tbody>
                     </table>
                 </div>
                 <div class="d-flex p-1 bg-light">
-                    <button class="btn btn-primary">Add Filter</button>
+                    <button @click="addFilter" class="btn btn-primary">Add Filter</button>
                 </div>
             </div>
             <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
@@ -131,8 +134,20 @@
 </template>
 <script>
 export default {
-    
-}
+  data() {
+    return {
+      filters: []
+    };
+  },
+  methods: {
+    addFilter() {
+      this.filters.push({ value1: '', value2: '', value3: '' });
+    },
+    removeFilter(index) {
+      this.filters.splice(index, 1);
+    }
+  }
+};
 </script>
 <style scoped>
 

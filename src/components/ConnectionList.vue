@@ -16,7 +16,7 @@
     <div class="row ps-5">
       <div v-for="(item , i) in connections" :key="i" class="col-md-4  p-0">
         <div class="card mt-3 shadow" :class="[item.connection_type === 'mysql' ? 'mysql-logo' : 'pg-logo']" style="width: 20rem;">
-          <button class="btn btn-outline-danger rounded-pill d-flex justify-content-center align-items-center" style="position: absolute; top: 5px; right: 5px; width: 30px; height: 30px;" title="Remove Connection">
+          <button @click="deleteConnection(item.id)" class="btn btn-outline-danger rounded-pill d-flex justify-content-center align-items-center" style="position: absolute; top: 5px; right: 5px; width: 30px; height: 30px;" title="Remove Connection">
             <i class="fa-solid fa-xmark x-mark"></i>
           </button>
           <div class="card-body">
@@ -43,6 +43,11 @@
       :close="close"
       :opLoader="opLoader"
     ></ConnectionCreate>
+    <ConfirmAlert
+      v-if="deleteCon"
+      :deleteCheck="deleteCheck"
+      :cancelCheck="cancelCheck"
+    ></ConfirmAlert>
     <spinner v-if="loader"></spinner>
 </div>
 </template>
@@ -53,6 +58,8 @@ import ConnectionCreate from './modal/ConnectionCreate.vue'
 import spinner from './loader/spinner.vue';
 import { onMounted, ref } from 'vue'
 import axios from 'axios';
+import ConfirmAlert from './modal/ConfirmAlert.vue'
+import toastr from '@/utils/toaster';
 export default {
   setup(){
     let connections = ref([]);
@@ -70,12 +77,15 @@ export default {
   },
   components:{
     ConnectionCreate,
-    spinner
+    spinner,
+    ConfirmAlert
   },
   data() {
     return {
       createCon: false,
-      loader: false
+      loader: false,
+      deleteCon: false,
+      con_id: null
     }
   },
   created() {
@@ -90,6 +100,27 @@ export default {
     },
     opLoader(flag = false){
       this.loader = flag;
+    },
+    deleteConnection(id){
+      this.deleteCon = true;
+      this.con_id = id
+    },
+    async deleteCheck(flag){
+      this.opLoader(true)
+      if (flag) {
+        const { data:{ success, message } } = await axios.get(`/remove-connection?connection_id=${this.con_id}`);
+        if (success) {
+          this.cancelCheck()
+          toastr.success(message);
+          await this.getConnectionList()
+        } else {
+          toastr.error(message);
+        }
+      }
+      this.opLoader()
+    },
+    cancelCheck(){
+      this.deleteCon = false;
     }
   }
 }

@@ -26,18 +26,34 @@
         </div>
       </div>
     </div>
-    <div class="mt-3">
-      <h5 class="fw-normal">
-        <i class="fa-solid fa-file-invoice me-2"></i>Report Name
-      </h5>
-      <p class=" fw-normal">
-        <i class="fa-solid fa-clipboard me-2"></i>Report Description
-      </p>
+    <div class="mt-0">
+      <div v-if="report_has_info" class="mt-3">
+        <h5 class="fw-normal mb-3">
+          <i class="fa-solid fa-file-invoice me-2"></i>Sales Report
+        </h5>
+        <p class=" fw-normal text-muted">
+          <i class="fa-solid fa-clipboard me-2"></i>This report describe about monthly sales report.
+        </p>
+      </div>
+      <div v-else>
+        <div class="form-floating mb-0 w-50">
+          <input type="text" class="form-control" id="floating1" placeholder="Enter Your Report Name">
+          <label for="floating1">
+            <i class="fa-solid fa-file-invoice me-2"></i>Enter Your Report Name
+          </label>
+        </div>
+        <div class="form-floating w-50">
+          <input type="text" class="form-control" id="floating2" placeholder="Enter Your Report Description">
+          <label for="floating2">
+            <i class="fa-solid fa-clipboard me-2"></i>Enter Your Report Description
+          </label>
+        </div>
+      </div>
     </div>
-    <hr style="margin-top: 30px;">
+    <hr :class="[report_has_info ? 'mt-4' : '']">
     <div>
       <div class="card mt-5 py-2">
-        <pre class="pre-scrollable border-start border-primary border-5 rounded" data-spy="scroll" style="height: 200px; margin-bottom: 0px;">
+        <pre class="pre-scrollable border-start border-primary border-5 rounded" data-spy="scroll" style="font-size: 0.85rem; height: 200px; margin-bottom: 0px;">
           SELECT 
             translation, 
             language_id, 
@@ -102,6 +118,7 @@ export default {
   },
   data() {
     return {
+      report_has_info: true
     }
   },
   created() {
@@ -116,5 +133,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
+/* .form-floating > .form-control, .form-floating > .form-select {
+    height: calc(3rem + 2px) !important;
+} */
 </style>

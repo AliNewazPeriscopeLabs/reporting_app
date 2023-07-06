@@ -110,7 +110,8 @@ body {
 }
 
 .form-control {
-  background-color: #fff !important;
+  background-color: #F8F8F8 !important;
+  border: none !important;
 }
 
 .is-invalid .mx-input {
@@ -672,7 +673,7 @@ multiselect__option::placeholder {
 }
 
 .form-control:focus {
-  border: 1px solid #2898E0 !important;
+  border: none !important;
   box-shadow: none !important;
 }
 
