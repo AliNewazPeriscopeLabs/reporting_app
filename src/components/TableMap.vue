@@ -37,7 +37,10 @@
       v-if="joinModal"
       :close="removeJoin"
       :create="addJoinType"
-      ></join-modal>
+      :s_table="s_table"
+      :t_table="t_table"
+      :columns="columns"
+    ></join-modal>
   </div>
 </template>
 <script>
@@ -56,9 +59,10 @@ export default {
 
     let tables = ref([])
     let joinModal = ref(false)
-    let id = 0
-    function getId() {
-      return `table_${id++}`
+    let id = 0;
+    // let s_table = '', t_table = '';
+    function getId(table) {
+      return `${table}_${id++}`
     }
 
     const { findNode, onConnect, addEdges, addNodes, project, vueFlowRef, $reset } = useVueFlow({
@@ -84,16 +88,6 @@ export default {
       }
     }
 
-    onConnect((params) =>{
-      joinModal.value = true
-      addEdges({
-        ...params,
-        label: 'Inner-Join',
-        style: { stroke: 'orange' },
-        labelBgStyle: { fill: 'orange' },
-        type: 'custom',
-      })
-    })
 
     return {
       tables,
@@ -105,14 +99,18 @@ export default {
       addNodes,
       project,
       vueFlowRef,
-      getId
+      onConnect,
+      getId,
+      addEdges
     }
   },
   data() {
     return {
       tables_list:[],
       spin: false,
-      columns:{}
+      columns:{},
+      s_table: '',
+      t_table: ''
     }
   },
   components:{
@@ -127,6 +125,25 @@ export default {
   },
   created() {
     this.getTablesList()
+    
+    this.onConnect((params) =>{
+      this.joinModal = true
+      console.log(params);
+      const s_table_parts = params.source.split('_')
+      s_table_parts.pop();
+      this.s_table = s_table_parts.join('_');
+      const t_table_parts = params.target.split('_')
+      t_table_parts.pop()
+      this.t_table = t_table_parts.join('_');
+      // this.getConnectedTables(s_table, t_table)
+      this.addEdges({
+        ...params,
+        label: 'Inner-Join',
+        style: { stroke: 'orange' },
+        labelBgStyle: { fill: 'orange' },
+        type: 'custom',
+      })
+    })
   },
   computed:{
     id(){
@@ -138,6 +155,10 @@ export default {
 
   },
   methods: {
+    getConnectedTables(s_table, t_table){
+      this.s_table = s_table;
+      this.t_table = t_table
+    },
     async onDrop(event) {
       const type = event.dataTransfer?.getData('application/vueflow')
       const tableName = event.dataTransfer?.getData('application/table')
@@ -152,13 +173,13 @@ export default {
         await this.getColumns(tableName)
       }
       const newNode = {
-        id: this.getId(),
+        id: this.getId(tableName),
         type: 'custom',
         data:{
           table_name: tableName
         },
         position,
-        label: `${type} node`,
+        label: `${tableName} ${type}`,
       }
 
       this.addNodes([newNode])
