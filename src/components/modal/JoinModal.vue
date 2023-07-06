@@ -30,7 +30,6 @@
                                   <option value="Left Join">Left Join</option>
                                   <option value="Right Join">Right Join</option>
                                   <option value="Inner Join">Inner Join</option>
-                                  <option value="Outer Join">Outer Join</option>
                                 </select>
                               </div>
                             </td>
@@ -39,9 +38,11 @@
                                 <div class="form-group">
                                   <select class="form-control" style="width: 100%;"  required="required">
                                     <option disabled value="">Please Choose</option>
+                                    <option v-for="(col, i) in columns[s_table]" :key="i" value="col">{{s_table}} &gt; {{col.column_name}}</option>
+<!-- 
                                     <option value="">Customer Records &gt; Customer ID</option>
                                     <option value="">Customer Records &gt; Customer Data</option>
-                                    <option value="">Customer Records &gt; Address</option>
+                                    <option value="">Customer Records &gt; Address</option> -->
                                   </select>
                                 </div>
                             </td>
@@ -50,9 +51,7 @@
                               <div class="form-group">
                                 <select class="form-control" style="width: 100%;"  required="required">
                                   <option disabled value="">Please Choose</option>
-                                  <option value="">Customer Records &gt; Customer ID</option>
-                                  <option value="">Customer Records &gt; Customer Data</option>
-                                  <option value="">Customer Records &gt; Address</option>
+                                  <option v-for="(col, i) in columns[t_table]" :key="i" value="col">{{t_table}} &gt; {{col.column_name}}</option>
                                 </select>
                               </div>
                             </td>
@@ -87,7 +86,10 @@ import axios from 'axios'
 export default {
   props:[
     'close',
-    'create'
+    'create',
+    's_table',
+    't_table',
+    'columns'
   ],
   data() {
     return {

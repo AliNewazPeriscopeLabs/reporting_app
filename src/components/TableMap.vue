@@ -1,14 +1,20 @@
 <template>
   <div class="dndflow" @drop="onDrop">
-    <Sidebar :tables_list="tables_list" />
+    <Sidebar 
+      :tables_list="tables_list"
+      :getColumns="getColumns" 
+      :columns="columns"
+    />
     <div class="d-flex flex-column justify-content-center align-items-center w-100" style="height: 100vh;">
       <VueFlow 
         v-model="tables" 
         @dragover="onDragOver"
-        
       >
         <template #node-custom="{ data }">
-            <ColorSelectorNode :data="data"  />
+          <TableNode 
+            :data="data"
+            :columns="columns"  
+          />
         </template>
         <Panel :position="PanelPosition.TopRight" class="controls">
           <div class="d-flex justify-content-center align-items-center">
@@ -31,7 +37,10 @@
       v-if="joinModal"
       :close="removeJoin"
       :create="addJoinType"
-      ></join-modal>
+      :s_table="s_table"
+      :t_table="t_table"
+      :columns="columns"
+    ></join-modal>
   </div>
 </template>
 <script>
@@ -40,7 +49,7 @@ import { Panel, PanelPosition, VueFlow, useVueFlow } from '@vue-flow/core'
 import { nextTick, watch } from 'vue'
 import Sidebar from './Sidebar.vue'
 import OptionsPen from './OptionsPen.vue'
-import ColorSelectorNode from './TableNode.vue'
+import TableNode from './TableNode.vue'
 import JoinModal from './modal/JoinModal.vue'
 import spinner from './loader/spinner.vue'
 import axios from 'axios'
@@ -50,9 +59,10 @@ export default {
 
     let tables = ref([])
     let joinModal = ref(false)
-    let id = 0
-    function getId() {
-      return `table_${id++}`
+    let id = 0;
+    // let s_table = '', t_table = '';
+    function getId(table) {
+      return `${table}_${id++}`
     }
 
     const { findNode, onConnect, addEdges, addNodes, project, vueFlowRef, $reset } = useVueFlow({
@@ -78,9 +88,55 @@ export default {
       }
     }
 
-    onConnect((params) =>{
-      joinModal.value = true
-      addEdges({
+
+    return {
+      tables,
+      resetTransform,
+      onDragOver,
+      joinModal,
+      PanelPosition,
+      findNode,
+      addNodes,
+      project,
+      vueFlowRef,
+      onConnect,
+      getId,
+      addEdges
+    }
+  },
+  data() {
+    return {
+      tables_list:[],
+      spin: false,
+      columns:{},
+      s_table: '',
+      t_table: ''
+    }
+  },
+  components:{
+    Background,
+    VueFlow,
+    Panel,
+    OptionsPen,
+    TableNode,
+    spinner,
+    JoinModal,
+    Sidebar
+  },
+  created() {
+    this.getTablesList()
+    
+    this.onConnect((params) =>{
+      this.joinModal = true
+      console.log(params);
+      const s_table_parts = params.source.split('_')
+      s_table_parts.pop();
+      this.s_table = s_table_parts.join('_');
+      const t_table_parts = params.target.split('_')
+      t_table_parts.pop()
+      this.t_table = t_table_parts.join('_');
+      // this.getConnectedTables(s_table, t_table)
+      this.addEdges({
         ...params,
         label: 'Inner-Join',
         style: { stroke: 'orange' },
@@ -88,34 +144,49 @@ export default {
         type: 'custom',
       })
     })
+  },
+  computed:{
+    id(){
+      if (this.$route && this.$route.query) {
+        return this.$route.query.id
+      } 
+      return null;
+    }
 
-
-    function onDrop(event) {
+  },
+  methods: {
+    getConnectedTables(s_table, t_table){
+      this.s_table = s_table;
+      this.t_table = t_table
+    },
+    async onDrop(event) {
       const type = event.dataTransfer?.getData('application/vueflow')
       const tableName = event.dataTransfer?.getData('application/table')
 
-      const { left, top } = vueFlowRef.value.getBoundingClientRect()
+      const { left, top } = this.vueFlowRef.getBoundingClientRect()
 
-      const position = project({
+      const position = this.project({
         x: event.clientX - left,
         y: event.clientY - top,
       })
-
+      if (!this.columns[tableName]?.length) {
+        await this.getColumns(tableName)
+      }
       const newNode = {
-        id: getId(),
+        id: this.getId(tableName),
         type: 'custom',
         data:{
           table_name: tableName
         },
         position,
-        label: `${type} node`,
+        label: `${tableName} ${type}`,
       }
 
-      addNodes([newNode])
+      this.addNodes([newNode])
 
       // align node position after drop, so it's centered to the mouse
       nextTick(() => {
-        const node = findNode(newNode.id)
+        const node = this.findNode(newNode.id)
         const stop = watch(
           () => node.dimensions,
           (dimensions) => {
@@ -128,46 +199,7 @@ export default {
         )
         // console.log(node);
       })
-    }
-
-    return {
-      tables,
-      resetTransform,
-      onDragOver,
-      onDrop,
-      joinModal,
-      PanelPosition
-    }
-  },
-  data() {
-    return {
-      tables_list:[],
-      spin: false
-    }
-  },
-  components:{
-    Background,
-    VueFlow,
-    Panel,
-    OptionsPen,
-    ColorSelectorNode,
-    spinner,
-    JoinModal,
-    Sidebar
-  },
-  created() {
-    this.getTablesList()
-  },
-  computed:{
-    id(){
-      if (this.$route && this.$route.query) {
-        return this.$route.query.id
-      } 
-      return null;
-    }
-
-  },
-  methods: {
+    },
     removeJoin(){
       this.joinModal = false;
       this.tables.pop();
@@ -182,6 +214,13 @@ export default {
       this.tables_list = data;
       this.spin=false;
       
+    },
+    async getColumns(table){
+      this.spin=true;
+      const {data:{data}} = await axios.get(`get-columns?connection_id=${this.id}&table_name=${table}`)
+      // console.log(data);
+      this.columns[table] = data
+      this.spin=false;
     }
   },
 }
