@@ -33,7 +33,9 @@
           </div>
         </div>
       </div>
-     
+    </div>
+    <div class="container text-secondary text-center" style="position: absolute; bottom: 10px;">
+      <i class="fa-regular fa-copyright me-2"></i>Periscope Labs Limited 2023
     </div>
     <ConnectionCreate 
       v-if="createCon"

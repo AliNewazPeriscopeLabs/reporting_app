@@ -1,6 +1,8 @@
 <template>
   <aside>
-    <!-- <div class="description text-secondary">You can drag these nodes to the pane.</div> -->
+    <div class="description text-secondary fs-6">
+      <i class="fa-solid fa-database me-2"></i>report_builder
+    </div>
 
     <div class="accordion accordion-flush" id="accordionFlushExample">
       <div class="accordion-item mb-2">
