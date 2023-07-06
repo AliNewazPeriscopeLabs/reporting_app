@@ -24,7 +24,7 @@
                         <tbody>
                             <tr class="rule-container">
                                 <td>
-                                    <select class="form-control" style="display: none;">
+                                    <select class="form-control" >
                                         <option>And</option>
                                         <option>Or</option>
                                     </select>

@@ -2,7 +2,11 @@
   <div class="dndflow" @drop="onDrop">
     <Sidebar :tables_list="tables_list" />
     <div class="d-flex flex-column justify-content-center align-items-center w-100" style="height: 100vh;">
-      <VueFlow v-model="tables" @dragover="onDragOver" >
+      <VueFlow 
+        v-model="tables" 
+        @dragover="onDragOver"
+        
+      >
             <template #node-custom="{ data }">
                 <ColorSelectorNode :data="data"  />
             </template>
@@ -23,6 +27,11 @@
       <OptionsPen />
     </div>
     <spinner v-if="spin"></spinner>
+    <join-modal 
+      v-if="joinModal"
+      :close="removeJoin"
+      :create="addJoinType"
+      ></join-modal>
   </div>
 </template>
 <script>
@@ -32,6 +41,7 @@ import { nextTick, watch } from 'vue'
 import Sidebar from './Sidebar.vue'
 import OptionsPen from './OptionsPen.vue'
 import ColorSelectorNode from './TableNode.vue'
+import JoinModal from './modal/JoinModal.vue'
 import spinner from './loader/spinner.vue'
 import axios from 'axios'
 import { ref } from 'vue'
@@ -39,6 +49,7 @@ export default {
   setup() {
 
     let tables = ref([])
+    let joinModal = ref(false)
     let id = 0
     function getId() {
       return `table_${id++}`
@@ -68,7 +79,7 @@ export default {
     }
 
     onConnect((params) =>{
-        // console.log(params);
+      joinModal.value = true
       addEdges({
         ...params,
         label: 'Inner-Join',
@@ -77,6 +88,12 @@ export default {
         type: 'custom',
       })
     })
+
+    function removeJoin(){
+      joinModal.value = false;
+      tables.value.pop();
+    }
+
 
     function onDrop(event) {
       const type = event.dataTransfer?.getData('application/vueflow')
@@ -110,7 +127,7 @@ export default {
           },
           { deep: true, flush: 'post' },
         )
-        console.log(node);
+        // console.log(node);
       })
     }
 
@@ -119,6 +136,8 @@ export default {
       resetTransform,
       onDragOver,
       onDrop,
+      joinModal,
+      removeJoin,
       PanelPosition
     }
   },
@@ -135,6 +154,7 @@ export default {
     OptionsPen,
     ColorSelectorNode,
     spinner,
+    JoinModal,
     Sidebar
   },
   created() {
@@ -150,6 +170,10 @@ export default {
 
   },
   methods: {
+    addJoinType(type){
+      this.tables[this.tables.length-1].label = type
+      this.joinModal = false;
+    },
     async getTablesList(){
       this.spin=true;
       const { data:{ data } } = await axios.get('/get-tables?connection_id='+this.id);
