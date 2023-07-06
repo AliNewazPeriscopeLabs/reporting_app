@@ -1,13 +1,14 @@
 <script setup>
 import { Handle, Position } from '@vue-flow/core'
-
 </script>
 
 <template>
 
   <div
-    style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; max-width: 90%; margin: auto; gap: 3px"
+    style="display: flex; flex-direction: column; flex-wrap: wrap; justify-content: center; margin: auto; gap: 3px;"
+    class="card p-2"
   >
+    <h6>{{data.table_name}}</h6>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
         <label class="form-check-label" for="flexCheckDefault">
@@ -15,14 +16,14 @@ import { Handle, Position } from '@vue-flow/core'
         </label>
     </div>
     <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-        <label class="form-check-label" for="flexCheckDefault">
+        <input class="form-check-input" type="checkbox" value="" id="columnOne">
+        <label class="form-check-label" for="columnOne">
             Column One
         </label>
     </div>
     <div class="form-check">
-        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-        <label class="form-check-label" for="flexCheckChecked">
+        <input class="form-check-input" type="checkbox" value="" id="columnTwo" checked>
+        <label class="form-check-label" for="columnTwo">
             Column Two
         </label>
     </div>
@@ -31,3 +32,15 @@ import { Handle, Position } from '@vue-flow/core'
   <Handle id="a" type="source" :position="Position.Right"  />
 
 </template>
+<script>
+export default {
+  props:[
+    'data'
+  ]
+}
+</script>
+<style >
+  .card{
+    font-size: 12px;
+  }
+</style>

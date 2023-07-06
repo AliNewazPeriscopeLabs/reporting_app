@@ -14,7 +14,7 @@
         <div id="flush-collapseOne" class="accordion-collapse collapse py-2" aria-labelledby="flush-headingOne" data-bs-parent="#accordionFlushExample">
           <template v-for="(tab, i) in tables_list" :key="i">
             <div  class="nodes p-2 ms-4">
-              <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event, tab.tablename)" type="button" data-bs-toggle="collapse" :data-bs-target="`#collapseExample${i}`" aria-expanded="false" :aria-controls="`collapseExample${i}`">
+              <button class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event,'custom', tab.tablename)" type="button" data-bs-toggle="collapse" :data-bs-target="`#collapseExample${i}`" aria-expanded="false" :aria-controls="`collapseExample${i}`">
                 <i class="fa-solid fa-table me-2"></i>{{tab.tablename}}
               </button>
             </div>
@@ -110,9 +110,10 @@
 <script>
 export default {
   setup(){
-    function onDragStart(event, nodeType) {
+    function onDragStart(event, nodeType, tableName) {
       if (event.dataTransfer) {
         event.dataTransfer.setData('application/vueflow', nodeType)
+        event.dataTransfer.setData('application/table', tableName)
         event.dataTransfer.effectAllowed = 'move'
       }
     }

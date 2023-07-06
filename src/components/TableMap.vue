@@ -7,23 +7,23 @@
         @dragover="onDragOver"
         
       >
-            <template #node-custom="{ data }">
-                <ColorSelectorNode :data="data"  />
-            </template>
-            <Panel :position="PanelPosition.TopRight" class="controls">
-              <div class="d-flex justify-content-center align-items-center">
-                <router-link :to="{ name: 'preview', query:{ id: id } }" class="btn btn-outline-primary btn-sm me-2">
-                  Preview
-                </router-link>
-                <button style="background-color: #113285; color: white" title="Reset Transform" @click="resetTransform">
-                    <svg width="16" height="16" viewBox="0 0 32 32">
-                        <path fill="#FFFFFB" d="M18 28A12 12 0 1 0 6 16v6.2l-3.6-3.6L1 20l6 6l6-6l-1.4-1.4L8 22.2V16a10 10 0 1 1 10 10Z" />
-                    </svg>
-                </button>
-              </div>
-            </Panel>
-            <Background/>  
-        </VueFlow>
+        <template #node-custom="{ data }">
+            <ColorSelectorNode :data="data"  />
+        </template>
+        <Panel :position="PanelPosition.TopRight" class="controls">
+          <div class="d-flex justify-content-center align-items-center">
+            <router-link :to="{ name: 'preview', query:{ id: id } }" class="btn btn-outline-primary btn-sm me-2">
+              Preview
+            </router-link>
+            <button style="background-color: #113285; color: white" title="Reset Transform" @click="resetTransform">
+                <svg width="16" height="16" viewBox="0 0 32 32">
+                    <path fill="#FFFFFB" d="M18 28A12 12 0 1 0 6 16v6.2l-3.6-3.6L1 20l6 6l6-6l-1.4-1.4L8 22.2V16a10 10 0 1 1 10 10Z" />
+                </svg>
+            </button>
+          </div>
+        </Panel>
+        <Background/>  
+      </VueFlow>
       <OptionsPen />
     </div>
     <spinner v-if="spin"></spinner>
@@ -89,14 +89,10 @@ export default {
       })
     })
 
-    function removeJoin(){
-      joinModal.value = false;
-      tables.value.pop();
-    }
-
 
     function onDrop(event) {
       const type = event.dataTransfer?.getData('application/vueflow')
+      const tableName = event.dataTransfer?.getData('application/table')
 
       const { left, top } = vueFlowRef.value.getBoundingClientRect()
 
@@ -107,7 +103,10 @@ export default {
 
       const newNode = {
         id: getId(),
-        type,
+        type: 'custom',
+        data:{
+          table_name: tableName
+        },
         position,
         label: `${type} node`,
       }
@@ -137,7 +136,6 @@ export default {
       onDragOver,
       onDrop,
       joinModal,
-      removeJoin,
       PanelPosition
     }
   },
@@ -170,6 +168,10 @@ export default {
 
   },
   methods: {
+    removeJoin(){
+      this.joinModal = false;
+      this.tables.pop();
+    },
     addJoinType(type){
       this.tables[this.tables.length-1].label = type
       this.joinModal = false;
