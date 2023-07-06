@@ -5,61 +5,70 @@
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <h4 class="favorite-color mt-2 text-center fw-normal" style="font-size: 24px;">Create Connection</h4>
+                <h4 class="favorite-color mt-2 text-center fw-normal" style="font-size: 24px;">Add Join Information</h4>
               </div>
               <div class="modal-body quore-custom-scrollbar">
-                <form v-if="!connectionTested" @submit.prevent="testConnection">
-                  <div class="row g-3">
-                    <div class="col-12">
-                      <label for="db-type" class="form-label">Database Type</label>
-                      <select v-model="connection_type"  class="form-control form-select" name="db-type" id="db-type" required>
-                        <option value="" disabled selected>Select DB type</option>
-                        <option value="mysql">MySQL</option>
-                        <option value="postgres">PostGRES</option>
-                      </select>
-                    </div>
-                    <div class="col-md-6">
-                      <label for="host-name" class="form-label">Host</label>
-                      <input v-model="host" type="text" class="form-control" id="host-name" name="host-name" required>
-                    </div>
-                    <div class="col-md-6">
-                      <label for="port-no" class="form-label">Port No:</label>
-                      <input v-model="port" type="number" class="form-control" id="port-no" name="port-no" required>
-                    </div>
-                    <div class="col-md-6">
-                      <label for="user-name" class="form-label">User name:</label>
-                      <input v-model="user_name" type="text" class="form-control" id="user-name" name="user-name" required>
-                    </div>
-                    <div class="col-md-6">
-                      <label for="password" class="form-label">Password</label>
-                      <input v-model="password" type="password" class="form-control" id="password" name="password">
-                    </div>
-                    <div class="col-12">
-                      <div class="row justify-content-end">
-                        <button type="submit" class="btn btn-dark w-20 fw-bold me-2" >Connect</button>
-                        <button @click="close()" type="button" class="btn btn-light w-20 fw-bold" >Cancel</button>
-                      </div>
-                    </div>
-                  </div>
-                </form>
-                <form v-else @submit.prevent="createConnection">
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <label for="connection-name" class="form-label">Connection Name</label>
-                      <input v-model="connection_name" type="text" class="form-control" id="connection-name" name="connection-name" required>
-                    </div>
-                    <div  class="col-md-6">
-                      <label for="password" class="form-label">Databases</label>
-                      <select v-model="default_db"  class="form-control form-select" name="db-name" id="db-name" required>
-                        <option value="" selected >Select Database</option>
-                        <option v-for="(data, i) in databases" :key="i"  :value="data">{{data}}</option>
-                      </select>
-                    </div>
-                    <div class="col-12">
-                      <div class="row justify-content-end">
-                        <button type="submit" class="btn btn-dark w-20 fw-bold me-2" >Connect</button>
-                        <button @click="close()" type="button" class="btn btn-light w-20 fw-bold" >Cancel</button>
-                      </div>
+                <form @submit.prevent="CreateJoin">
+                  <table class="table table-hover table-borderless">
+                    <thead>
+                      <tr>
+                        <!-- <th style="width: 10%"></th> -->
+                        <th style="width: 15%">Type of join</th>
+                        <th style="width: 4%"></th>
+                        <th style="width: 35%">Primary Table Column</th>
+                        <th style="width: 4%"></th>
+                        <th style="width: 35%">Secondary Table Column</th>
+                        <th></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="rule-container">
+                            <td data-bind="with: Field">
+                              <div class="form-group">
+                                <select v-model="type" class="form-control" style="width: 100%;"  required="required">
+                                  <option disabled value="">Please Choose</option>
+                                  <option value="Left Join">Left Join</option>
+                                  <option value="Right Join">Right Join</option>
+                                  <option value="Inner Join">Inner Join</option>
+                                  <option value="Outer Join">Outer Join</option>
+                                </select>
+                              </div>
+                            </td>
+                            <td data-bind="with: Field"></td>
+                            <td>
+                                <div class="form-group">
+                                  <select class="form-control" style="width: 100%;"  required="required">
+                                    <option disabled value="">Please Choose</option>
+                                    <option value="">Customer Records &gt; Customer ID</option>
+                                    <option value="">Customer Records &gt; Customer Data</option>
+                                    <option value="">Customer Records &gt; Address</option>
+                                  </select>
+                                </div>
+                            </td>
+                            <td data-bind="with: Field"></td>
+                            <td data-bind="with: Field">
+                              <div class="form-group">
+                                <select class="form-control" style="width: 100%;"  required="required">
+                                  <option disabled value="">Please Choose</option>
+                                  <option value="">Customer Records &gt; Customer ID</option>
+                                  <option value="">Customer Records &gt; Customer Data</option>
+                                  <option value="">Customer Records &gt; Address</option>
+                                </select>
+                              </div>
+                            </td>
+                            <td>
+                                <!-- <span  class="badge badge-info" style="display: none;">Required Filter</span> -->
+                              <!-- <button class="btn btn-sm btn-secondary" >Remove</button> -->
+                                <!-- ko if: Field() && Field().fieldType == 'DateTime' && Operator() == 'range' && $root.canAddSeries() && $index()==0 --><!--/ko -->
+                            </td>
+                        </tr>
+                        <!-- ko foreach: compareTo --><!-- /ko -->
+                    </tbody>
+                  </table>
+                  <div class="col-12">
+                    <div class="row justify-content-end pt-3 pe-2">
+                      <button type="submit" class="btn btn-dark w-20 fw-bold me-2" >Create Join</button>
+                      <button @click="close()" type="button" class="btn btn-light w-20 fw-bold" >Cancel Join</button>
                     </div>
                   </div>
                 </form>
@@ -78,24 +87,17 @@ import axios from 'axios'
 export default {
   props:[
     'close',
-    'opLoader',
-    'getConnectionList'
+    'create'
   ],
   data() {
     return {
-      isCancel: false,
-      connection_type: '',
-      user_name: null,
-      host: null,
-      password: null,
-      port: 3306,
-      databases: [],
-      default_db: '',
-      connectionTested: false,
-      connection_name: null
+      type: 'Inner Join'
     }
   },
   methods: {
+    CreateJoin(){
+      this.create(this.type);
+    },
     async testConnection(){
       this.opLoader(true)
 
