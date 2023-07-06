@@ -53,7 +53,7 @@
       </div>
     </div>
     <div class="table-responsive mt-5">
-      <table class="table table-striped">
+      <table class="table table-striped border border-1">
         <thead>
           <tr>
             <th scope="col">#</th>

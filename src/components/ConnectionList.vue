@@ -9,14 +9,14 @@
       </span>
       <!-- <span @click="createCon = true" class="add"> +  Add </span> -->
     </div>
-    <div class="d-flex align-items-center mt-5">
+    <div class="d-flex align-items-center ps-4 mt-5">
       <h4 class="me-3">SQL Connections</h4>
       <span @click="createCon = true" class="add" title="Create Connection">+</span>
     </div>
-    <div class="row">
+    <div class="row ps-5">
       <div v-for="(item , i) in connections" :key="i" class="col-md-4  p-0">
-        <div class="card mt-3 shadow" :class="[item.connection_type === 'mysql' ? 'mysql-logo' : 'pg-logo']" style="width: 18rem;">
-          <button class="btn btn-outline-danger rounded-pill d-flex justify-content-center align-items-center" style="position: absolute; right: 15px; width: 30px; height: 30px;" title="Remove Connection">
+        <div class="card mt-3 shadow" :class="[item.connection_type === 'mysql' ? 'mysql-logo' : 'pg-logo']" style="width: 20rem;">
+          <button class="btn btn-outline-danger rounded-pill d-flex justify-content-center align-items-center" style="position: absolute; top: 5px; right: 5px; width: 30px; height: 30px;" title="Remove Connection">
             <i class="fa-solid fa-xmark x-mark"></i>
           </button>
           <div class="card-body">
@@ -33,7 +33,9 @@
           </div>
         </div>
       </div>
-     
+    </div>
+    <div class="container text-secondary text-center" style="position: absolute; bottom: 10px;">
+      <i class="fa-regular fa-copyright me-2"></i>Periscope Labs Limited 2023
     </div>
     <ConnectionCreate 
       v-if="createCon"
