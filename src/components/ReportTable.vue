@@ -118,7 +118,7 @@ export default {
   },
   data() {
     return {
-      report_has_info: true
+      report_has_info: false
     }
   },
   created() {

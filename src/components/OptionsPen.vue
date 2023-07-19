@@ -14,6 +14,7 @@
                     <table class="table table-hover table-borderless">
                         <thead>
                             <tr>
+                                <th style="width: 10%"></th>
                                 <th style="width: 30%">Field</th>
                                 <th style="width: 10%"></th>
                                 <th style="width: 30%">Filter</th>
@@ -23,20 +24,30 @@
                         <tbody v-for="(filter, index) in filters" :key="index">
                                 <tr class="rule-container">
                                     <td>
-                                        <div class="form-group">
-                                            <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.value1" required="required"><option value="">Please Choose</option><option value="">Customer Records &gt; Customer ID</option><option value="">Customer Records &gt; Customer Data</option><option value="">Customer Records &gt; Address</option></select>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <select class="form-control" v-model="filter.value2">
-                                            <option value="">=</option>
-                                            <option value="">></option>
-                                            <option value="">>=</option>
+                                        <select :class="[filter.flag ? 'form-control rule-visible' : 'form-control']" style="display: none;" v-model="filter.value1">
+                                            <option value="and">And</option>
+                                            <option value="or">Or</option>
                                         </select>
                                     </td>
                                     <td>
                                         <div class="form-group">
-                                            <input class="form-control" type="number" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.value3" required="required" />
+                                            <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.value2" required="required"><option value="">Please Choose</option><option value="1">Customer Records &gt; Customer ID</option><option value="0">Customer Records &gt; Customer Data</option><option value="2">Customer Records &gt; Date</option></select>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <select class="form-control" v-model="filter.value3">
+                                            <option value="">Select</option>
+                                            <option v-for="(operators, index) in (filter.value2 == 1 ?numbers_type_operator : filter.value2 == 2 ? date_type_operator : strings_type_operator)" :key="index" :value="operators.value">{{ operators.name }}</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div v-if="filter.value3 != 'between'" class="form-group">
+                                            <input :class="[(filter.value3 == 'is blank' || filter.value3 == 'is not blank') ? 'form-control d-none' : 'form-control']" :type="[filter.value2 == 1 ? 'number' : filter.value2 == 2 ? 'date' : 'text']" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.value4" required="required" />
+                                        </div>
+                                        <div v-else class="form-group d-flex align-items-center">
+                                            <input :class="[(filter.value3 == 'is blank' || filter.value3 == 'is not blank') ? 'form-control d-none' : 'form-control']" :type="[filter.value2 == 1 ? 'number' : filter.value2 == 2 ? 'date' : 'text']" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.value4" required="required" />
+                                            <span class="text-center fw-bold fs-5 mx-2">~</span>
+                                            <input :class="[(filter.value3 == 'is blank' || filter.value3 == 'is not blank') ? 'form-control d-none' : 'form-control']" :type="[filter.value2 == 1 ? 'number' : filter.value2 == 2 ? 'date' : 'text']" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.value4" required="required" />
                                         </div>
                                     </td>
                                     <td>
@@ -136,12 +147,46 @@
 export default {
   data() {
     return {
-      filters: []
+      filters: [],
+      numbers_type_operator: [
+        {name: '=', value: '='},
+        {name: '>', value: '>'},
+        {name: '<', value: '<'},
+        {name: '>=', value: '>='},
+        {name: '<=', value: '<='},
+        {name: 'not equal', value: 'not equal'},
+        {name: 'between', value: 'between'},
+        {name: 'is blank', value: 'is blank'},
+        {name: 'is not blank', value: 'is not blank'},
+      ],
+      strings_type_operator: [
+        {name: '=', value: '='},
+        {name: 'like', value: 'like'},
+        {name: 'not like', value: 'not like'},
+        {name: 'not equal', value: 'not equal'},
+        {name: 'is blank', value: 'is blank'},
+        {name: 'is not blank', value: 'is not blank'},
+      ],
+      date_type_operator: [
+        {name: '=', value: '='},
+        {name: '>', value: '>'},
+        {name: '<', value: '<'},
+        {name: '>=', value: '>='},
+        {name: '<=', value: '<='},
+        {name: 'not equal', value: 'not equal'},
+        {name: 'between', value: 'between'},
+        {name: 'is blank', value: 'is blank'},
+        {name: 'is not blank', value: 'is not blank'},
+      ],
     };
   },
   methods: {
     addFilter() {
-      this.filters.push({ value1: '', value2: '', value3: '' });
+      if (this.filters.length === 0) {
+        this.filters.push({ flag: false, value2: '', value3: '', value4: '' });
+      } else {
+        this.filters.push({ flag: true, value1:'and', value2: '', value3: '', value4: '' });
+      }
     },
     removeFilter(index) {
       this.filters.splice(index, 1);
@@ -228,5 +273,9 @@ export default {
 }
 .min-height{
     min-height: 223px !important;
+}
+
+.rule-visible{
+    display: block !important;
 }
 </style>
