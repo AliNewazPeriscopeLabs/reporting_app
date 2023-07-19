@@ -40,6 +40,7 @@
       :s_table="s_table"
       :t_table="t_table"
       :columns="columns"
+      :createJoin="createJoin"
     ></join-modal>
   </div>
 </template>
@@ -56,13 +57,12 @@ import axios from 'axios'
 import { ref } from 'vue'
 export default {
   setup() {
-
-    let tables = ref([])
-    let joinModal = ref(false)
+    let tables = ref([]);
+    let joinModal = ref(false);
     let id = 0;
     // let s_table = '', t_table = '';
     function getId(table) {
-      return `${table}_${id++}`
+      return `${table}_${id++}`;
     }
 
     const { findNode, onConnect, addEdges, addNodes, project, vueFlowRef, $reset } = useVueFlow({
@@ -74,7 +74,7 @@ export default {
           position: { x: 250, y: 25 },
         },
       ],
-    })
+    });
 
     function resetTransform() {
       tables = [];
@@ -109,6 +109,7 @@ export default {
       tables_list:[],
       spin: false,
       columns:{},
+      joins: [],
       s_table: '',
       t_table: ''
     }
@@ -155,6 +156,10 @@ export default {
 
   },
   methods: {
+    createJoin(x){
+      this.joins.push(x);
+      this.joinModal = false;
+    },
     getConnectedTables(s_table, t_table){
       this.s_table = s_table;
       this.t_table = t_table
