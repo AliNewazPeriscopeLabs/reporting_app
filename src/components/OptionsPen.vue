@@ -111,7 +111,7 @@
                                     </div>
                                 </td>
                                 <td>
-                                    <button @click="removeJoins(index)" class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
+                                    <button @click="removeJoins(join.join_id, index)" class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
                                 </td>
                             </tr>
                         </tbody>

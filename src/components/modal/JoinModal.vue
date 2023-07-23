@@ -61,6 +61,7 @@
                     </tbody>
                   </table>
                   <div class="col-12">
+                    <p v-if="joinExists">This join is already created!</p>
                     <div class="row justify-content-end pt-3 pe-2">
                       <button type="submit" class="btn btn-dark w-20 fw-bold me-2" >Create Join</button>
                       <button @click="close()" type="button" class="btn btn-light w-20 fw-bold" >Cancel Join</button>

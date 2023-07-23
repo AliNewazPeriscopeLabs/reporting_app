@@ -114,8 +114,7 @@ export default {
       columns:{},
       joins: [],
       s_table: '',
-      t_table: '',
-      flagNumber: null
+      t_table: ''
     }
   },
   components:{
@@ -230,8 +229,9 @@ export default {
       this.joinModal = false;
       this.tables.pop();
     },
-    removeJoins(index) {
-        this.joins.splice(index, 1);
+    removeJoins(join_id, index) {
+      this.joins.splice(index, 1);
+      this.tables = this.tables.filter(e => e.join_id != join_id);
     },
     addJoinType(type){
       this.tables[this.tables.length-1].label = type
