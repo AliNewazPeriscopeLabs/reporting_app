@@ -25,7 +25,7 @@
                         <tr class="rule-container">
                             <td data-bind="with: Field">
                               <div class="form-group">
-                                <select v-model="type" class="form-control" style="width: 100%;"  required="required">
+                                <select v-model="join_type" class="form-control" style="width: 100%;"  required="required">
                                   <option disabled value="">Please Choose</option>
                                   <option value="Left Join">Left Join</option>
                                   <option value="Right Join">Right Join</option>
@@ -47,7 +47,7 @@
                               <div class="form-group">
                                 <select v-model="to_column" class="form-control" style="width: 100%;"  required="required">
                                   <option disabled value="">Please Choose</option>
-                                  <option v-for="(col, i) in t_table_columns" :key="i" value="col">{{t_table}} &gt; {{col.column_name}}</option>
+                                  <option v-for="(col, i) in t_table_columns" :key="i" :value="col">{{t_table}} &gt; {{col.column_name}}</option>
                                 </select>
                               </div>
                             </td>
@@ -90,7 +90,7 @@ export default {
     return {
       from_column: '',
       to_column: '',
-      type: 'Inner Join',
+      join_type: 'Inner Join',
       t_table_columns: []
     }
   },
@@ -103,7 +103,8 @@ export default {
     CreateJoin(){
       this.createJoin({
         from_column: this.from_column,
-        to_column: this.to_column
+        to_column: this.to_column,
+        join_type: this.join_type
       })
     },
   }

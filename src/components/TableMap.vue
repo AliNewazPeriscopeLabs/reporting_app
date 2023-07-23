@@ -30,7 +30,10 @@
         </Panel>
         <Background/>  
       </VueFlow>
-      <OptionsPen />
+      <OptionsPen 
+        :joins="joins" 
+        :removeJoins="removeJoins"
+      />
     </div>
     <spinner v-if="spin"></spinner>
     <join-modal 
@@ -111,7 +114,8 @@ export default {
       columns:{},
       joins: [],
       s_table: '',
-      t_table: ''
+      t_table: '',
+      flagNumber: null
     }
   },
   components:{
@@ -208,6 +212,9 @@ export default {
     removeJoin(){
       this.joinModal = false;
       this.tables.pop();
+    },
+    removeJoins(index) {
+        this.joins.splice(index, 1);
     },
     addJoinType(type){
       this.tables[this.tables.length-1].label = type

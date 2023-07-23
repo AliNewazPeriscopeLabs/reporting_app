@@ -77,35 +77,43 @@
                     <table class="table table-hover table-borderless">
                         <thead>
                             <tr>
-                                <th style="width: 10%"></th>
-                                <th style="width: 30%">Field</th>
-                                <th style="width: 10%"></th>
-                                <th style="width: 30%">Filter</th>
+                                <th style="width: 15%">Type of join</th>
+                                <th style="width: 4%"></th>
+                                <th style="width: 35%">Primary Table Column</th>
+                                <th style="width: 4%"></th>
+                                <th style="width: 35%">Secondary Table Column</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="rule-container">
-                                <td>
-                                    <select class="form-control" style="display: none;">
-                                        <option>And</option>
-                                        <option>Or</option>
-                                    </select>
-                                </td>
-                                <td>
+                            <tr class="rule-container" v-for="(join, index) in joins" :key="index">
+                                <td data-bind="with: Field">
                                     <div class="form-group">
-                                        <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" required="required"><option value="">Please Choose</option><option value="">Customer Records &gt; Customer ID</option><option value="">Customer Records &gt; Customer Data</option><option value="">Customer Records &gt; Address</option></select>
+                                        <select class="form-control" style="width: 100%;"  required="required">
+                                            <option>{{ join.join_type }}</option>
+                                        </select>
                                     </div>
                                 </td>
                                 <td data-bind="with: Field"></td>
-                                <td data-bind="with: Field"></td>
                                 <td>
-                                    <span data-bind="visible: Field() &amp;&amp; Field().forced" class="badge badge-info" style="display: none;">Required Filter</span>
-                                    <button class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
-                                    <!-- ko if: Field() && Field().fieldType == 'DateTime' && Operator() == 'range' && $root.canAddSeries() && $index()==0 --><!--/ko -->
+                                    <div class="form-group">
+                                        <select class="form-control" style="width: 100%;"  required="required">
+                                            <option>{{ join.from_column.column_name }}</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td data-bind="with: Field"></td>
+                                <td data-bind="with: Field">
+                                    <div class="form-group">
+                                        <select class="form-control" style="width: 100%;"  required="required">
+                                            <option>{{ join.to_column.column_name }}</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td>
+                                    <button @click="removeJoins(index)" class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
                                 </td>
                             </tr>
-                            <!-- ko foreach: compareTo --><!-- /ko -->
                         </tbody>
                     </table>
                 </div>
@@ -191,6 +199,10 @@
 </template>
 <script>
 export default {
+    props:[
+        'joins',
+        'removeJoins'
+    ],
   data() {
     return {
       filters: [],
