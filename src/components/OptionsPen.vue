@@ -77,9 +77,9 @@
                     <table class="table table-hover table-borderless">
                         <thead>
                             <tr>
-                                <th style="width: 15%">Type of join</th>
-                                <th style="width: 4%"></th>
                                 <th style="width: 35%">Primary Table Column</th>
+                                <th style="width: 4%"></th>
+                                <th style="width: 15%">Type of join</th>
                                 <th style="width: 4%"></th>
                                 <th style="width: 35%">Secondary Table Column</th>
                                 <th></th>
@@ -87,18 +87,18 @@
                         </thead>
                         <tbody>
                             <tr class="rule-container" v-for="(join, index) in joins" :key="index">
-                                <td data-bind="with: Field">
-                                    <div class="form-group">
-                                        <select class="form-control" style="width: 100%;"  required="required">
-                                            <option>{{ join.join_type }}</option>
-                                        </select>
-                                    </div>
-                                </td>
-                                <td data-bind="with: Field"></td>
                                 <td>
                                     <div class="form-group">
                                         <select class="form-control" style="width: 100%;"  required="required">
                                             <option>{{ join.from_column.column_name }}</option>
+                                        </select>
+                                    </div>
+                                </td>
+                                <td data-bind="with: Field"></td>
+                                <td data-bind="with: Field">
+                                    <div class="form-group">
+                                        <select class="form-control" style="width: 100%;"  required="required">
+                                            <option>{{ join.join_type }}</option>
                                         </select>
                                     </div>
                                 </td>
