@@ -47,7 +47,7 @@
                               <div class="form-group">
                                 <select v-model="to_column" class="form-control" style="width: 100%;"  required="required">
                                   <option disabled value="">Please Choose</option>
-                                  <option v-for="(col, i) in t_table_columns" :key="i" value="col">{{t_table}} &gt; {{col.column_name}}</option>
+                                  <option v-for="(col, i) in t_table_columns" :key="i" :value="col">{{t_table}} &gt; {{col.column_name}}</option>
                                 </select>
                               </div>
                             </td>
@@ -102,6 +102,9 @@ export default {
   methods: {
     CreateJoin(){
       this.createJoin({
+        type: this.type,
+        from_table: this.s_table,
+        to_table: this.t_table,
         from_column: this.from_column,
         to_column: this.to_column
       })

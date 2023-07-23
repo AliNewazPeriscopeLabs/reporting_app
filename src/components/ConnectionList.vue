@@ -56,25 +56,11 @@
 // import axios from 'axios'
 import ConnectionCreate from './modal/ConnectionCreate.vue'
 import spinner from './loader/spinner.vue';
-import { onMounted, ref } from 'vue'
 import axios from 'axios';
 import ConfirmAlert from './modal/ConfirmAlert.vue'
 import toastr from '@/utils/toaster';
 export default {
-  setup(){
-    let connections = ref([]);
-    onMounted( ()=>{
-      getConnectionList()
-    })
-    async function getConnectionList(){
-      const { data:{ data } } = await axios.get('/get-connection-list');
-      connections.value = data;
-    }
-    return{
-      connections,
-      getConnectionList
-    }
-  },
+  props:['connections'],
   components:{
     ConnectionCreate,
     spinner,

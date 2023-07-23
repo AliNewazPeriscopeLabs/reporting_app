@@ -18,7 +18,7 @@
         </template>
         <Panel :position="PanelPosition.TopRight" class="controls">
           <div class="d-flex justify-content-center align-items-center">
-            <router-link :to="{ name: 'preview', query:{ id: id } }" class="btn btn-outline-primary btn-sm me-2">
+            <router-link @click="runReportData" :to="{ name: 'preview', query:{ id: id } }" class="btn btn-outline-primary btn-sm me-2">
               Preview
             </router-link>
             <button style="background-color: #113285; color: white" title="Reset Transform" @click="resetTransform">
@@ -124,6 +124,10 @@ export default {
     JoinModal,
     Sidebar
   },
+  props:[
+    'connections',
+    'setData'
+  ],
   created() {
     this.getTablesList()
     
@@ -226,6 +230,16 @@ export default {
       // console.log(data);
       this.columns[table] = data
       this.spin=false;
+    },
+    async runReportData(){
+      const connection = this.connections.find(e=>e.id == this.id);
+      const {data:{data, query}} = await axios.post('/get-report-data',{
+        joins: this.joins,
+        connection
+      });
+      const columns = data.length>0 ? Object.keys(data[0]) : ['No Data Found'];
+      this.setData(columns, data, query);
+      console.log(data);
     }
   },
 }
