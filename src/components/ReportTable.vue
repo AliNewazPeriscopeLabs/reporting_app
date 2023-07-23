@@ -63,9 +63,6 @@
         <thead>
           <tr>
             <th v-for="(item, i) in columns" :key="i"  scope="col">{{item}}</th>
-            <!-- <th scope="col">First</th>
-            <th scope="col">Last</th>
-            <th scope="col">Handle</th> -->
           </tr>
         </thead>
         <tbody>

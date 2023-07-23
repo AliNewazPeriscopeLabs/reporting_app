@@ -136,7 +136,9 @@ export default {
     this.getTablesList()
     
     this.onConnect((params) =>{
-      this.joinModal = true
+      const joinId = this.getRandomInt(1000, 1999);
+      this.joinModal = true;
+      
       console.log(params);
       const s_table_parts = params.source.split('_')
       s_table_parts.pop();
@@ -144,12 +146,14 @@ export default {
       const t_table_parts = params.target.split('_')
       t_table_parts.pop()
       this.t_table = t_table_parts.join('_');
+      // this.addJoinId(joinId);
       // this.getConnectedTables(s_table, t_table)
       this.addEdges({
         ...params,
         label: 'Inner-Join',
         style: { stroke: 'orange' },
         labelBgStyle: { fill: 'orange' },
+        join_id: joinId,
         type: 'custom',
       })
     })
@@ -164,7 +168,16 @@ export default {
 
   },
   methods: {
+    getRandomArbitrary(min, max) {
+      return Math.random() * (max - min) + min;
+    },
+    getRandomInt(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
     createJoin(x){
+      x.join_id = this.tables[this.tables.length-1].join_id;
       this.joins.push(x);
       this.joinModal = false;
     },
@@ -224,6 +237,9 @@ export default {
       this.tables[this.tables.length-1].label = type
       this.joinModal = false;
     },
+    // addJoinId(id){
+    //   this.joins[this.joins.length-1].join_id = id;
+    // },
     async getTablesList(){
       this.spin=true;
       const { data:{ data } } = await axios.get('/get-tables?connection_id='+this.id);
