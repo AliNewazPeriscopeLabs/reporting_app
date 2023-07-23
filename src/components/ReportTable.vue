@@ -54,48 +54,26 @@
     <div>
       <div class="card mt-5 py-2">
         <pre class="pre-scrollable border-start border-primary border-5 rounded" data-spy="scroll" style="font-size: 0.85rem; height: 200px; margin-bottom: 0px;">
-          SELECT 
-            translation, 
-            language_id, 
-            name 
-          FROM 
-            vw_translate_all 
-          where 
-            language_id = 1 
-            and type = 'label' 
-          group by 
-            translation
+          {{ query }}
         </pre>
       </div>
     </div>
-    <div class="table-responsive mt-5">
+    <div class="table-responsive mt-5" style="height: 80vh;">
       <table class="table table-striped border border-1">
         <thead>
           <tr>
-            <th scope="col">#</th>
-            <th scope="col">First</th>
+            <th v-for="(item, i) in columns" :key="i"  scope="col">{{item}}</th>
+            <!-- <th scope="col">First</th>
             <th scope="col">Last</th>
-            <th scope="col">Handle</th>
+            <th scope="col">Handle</th> -->
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
+          <tr v-for="(data, i) in data_list" :key="i">
+            <td v-for="(col, j) in columns" :key="j" scope="row">{{ data[col] }}</td>
+            <!-- <td>Mark</td>
             <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
+            <td>@mdo</td> -->
           </tr>
         </tbody>
       </table>
@@ -105,9 +83,11 @@
   
 <script>
 export default {
-  components:{
-   
-  },
+  props:[
+    'columns',
+    'query',
+    'data_list'
+  ],
   computed: {
     id(){
       if (this.$route && this.$route.query) {
