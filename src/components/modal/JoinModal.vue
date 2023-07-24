@@ -103,12 +103,11 @@ export default {
   methods: {
     CreateJoin(){
       this.createJoin({
-        type: this.type,
+        join_type: this.join_type,
         from_table: this.s_table,
         to_table: this.t_table,
         from_column: this.from_column,
         to_column: this.to_column,
-        join_type: this.join_type
       })
     },
   }

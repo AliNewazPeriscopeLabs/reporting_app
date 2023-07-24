@@ -90,7 +90,9 @@
                                 <td>
                                     <div class="form-group">
                                         <select class="form-control" style="width: 100%;"  required="required">
-                                            <option>{{ join.from_column.column_name }}</option>
+                                            <option>
+                                                {{join.from_table}} &gt; {{ join.from_column.column_name }}
+                                            </option>
                                         </select>
                                     </div>
                                 </td>
@@ -98,7 +100,9 @@
                                 <td data-bind="with: Field">
                                     <div class="form-group">
                                         <select class="form-control" style="width: 100%;"  required="required">
-                                            <option>{{ join.join_type }}</option>
+                                            <option>
+                                                {{ join.join_type }}
+                                            </option>
                                         </select>
                                     </div>
                                 </td>
@@ -106,7 +110,9 @@
                                 <td data-bind="with: Field">
                                     <div class="form-group">
                                         <select class="form-control" style="width: 100%;"  required="required">
-                                            <option>{{ join.to_column.column_name }}</option>
+                                            <option>
+                                                {{join.to_table}} &gt; {{ join.to_column.column_name }}
+                                            </option>
                                         </select>
                                     </div>
                                 </td>
