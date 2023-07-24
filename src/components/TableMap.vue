@@ -33,6 +33,7 @@
       <OptionsPen 
         :joins="joins" 
         :removeJoins="removeJoins"
+        :columns="columns"
       />
     </div>
     <spinner v-if="spin"></spinner>
@@ -187,7 +188,7 @@ export default {
     async onDrop(event) {
       const type = event.dataTransfer?.getData('application/vueflow')
       const tableName = event.dataTransfer?.getData('application/table')
-
+      
       const { left, top } = this.vueFlowRef.getBoundingClientRect()
 
       const position = this.project({
