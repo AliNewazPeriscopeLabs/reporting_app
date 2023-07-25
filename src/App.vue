@@ -3,12 +3,15 @@
     <router-view
       :getConnectionList="getConnectionList"
       :connections="connections"
-      :setConnectionList="setConnectionList"
       :columns="columns"
       :data_list="data_list"
       :setData="setData"
       :query_error="query_error"
       :query="query"
+      :setMappedTable="setMappedTable"
+      :mappedTable="mappedTable"
+      :setSavedColumns="setSavedColumns"
+      :savedColumns="savedTableColumns"
     ></router-view>
   </div>
 </template>
@@ -42,7 +45,9 @@ export default {
       columns: [],
       data_list: [],
       query_error: '',
-      query:''
+      query:'',
+      mappedTable: [],
+      savedTableColumns: {}
     }
   },
   methods:{
@@ -51,6 +56,12 @@ export default {
       this.data_list = [...data]
       this.query = query
       this.query_error = error_message
+    },
+    setMappedTable(table=[]){
+      this.mappedTable = [...table]
+    },
+    setSavedColumns(columns={}){
+      this.savedTableColumns = {...columns}
     }
   }
 }
