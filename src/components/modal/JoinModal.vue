@@ -25,7 +25,7 @@
                         <tr class="rule-container">
                             <td data-bind="with: Field">
                               <div class="form-group">
-                                <select v-model="type" class="form-control" style="width: 100%;"  required="required">
+                                <select v-model="join_type" class="form-control" style="width: 100%;"  required="required">
                                   <option disabled value="">Please Choose</option>
                                   <option value="Left Join">Left Join</option>
                                   <option value="Right Join">Right Join</option>
@@ -61,6 +61,7 @@
                     </tbody>
                   </table>
                   <div class="col-12">
+                    <p v-if="joinExists">This join is already created!</p>
                     <div class="row justify-content-end pt-3 pe-2">
                       <button type="submit" class="btn btn-dark w-20 fw-bold me-2" >Create Join</button>
                       <button @click="close()" type="button" class="btn btn-light w-20 fw-bold" >Cancel Join</button>
@@ -90,7 +91,7 @@ export default {
     return {
       from_column: '',
       to_column: '',
-      type: 'Inner Join',
+      join_type: 'Inner Join',
       t_table_columns: []
     }
   },
@@ -102,11 +103,11 @@ export default {
   methods: {
     CreateJoin(){
       this.createJoin({
-        type: this.type,
+        join_type: this.join_type,
         from_table: this.s_table,
         to_table: this.t_table,
         from_column: this.from_column,
-        to_column: this.to_column
+        to_column: this.to_column,
       })
     },
   }

@@ -6,6 +6,7 @@
                 <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Filters</button>
                 <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Joins</button>
                 <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Group By</button>
+                <button class="nav-link" id="nav-sort-tab" data-bs-toggle="tab" data-bs-target="#nav-sort" type="button" role="tab" aria-controls="nav-sort" aria-selected="false">Sort By</button>
             </div>
         </nav>
         <div class="tab-content p-2 border bg-light" id="nav-tabContent" style="max-height: 200px; overflow-y: scroll; overflow-x: hidden;">
@@ -14,9 +15,9 @@
                     <table class="table table-hover table-borderless">
                         <thead>
                             <tr>
-                                <th style="width: 10%"></th>
+                                <th style="width: 12%"></th>
                                 <th style="width: 30%">Field</th>
-                                <th style="width: 10%"></th>
+                                <th style="width: 12%">Operator</th>
                                 <th style="width: 30%">Filter</th>
                                 <th></th>
                             </tr>
@@ -24,39 +25,39 @@
                         <tbody v-for="(filter, index) in filters" :key="index">
                                 <tr class="rule-container">
                                     <td>
-                                        <select :class="[filter.flag ? 'form-control rule-visible' : 'form-control']" style="display: none;" v-model="filter.value1">
+                                        <select :class="[filter.flag ? 'form-control rule-visible' : 'form-control']" style="display: none;" v-model="filter.and_or">
                                             <option value="and">And</option>
                                             <option value="or">Or</option>
                                         </select>
                                     </td>
                                     <td>
                                         <div class="form-group">
-                                            <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.value2" required="required"><option value="">Please Choose</option><option value="1">Customer Records &gt; Customer ID</option><option value="0">Customer Records &gt; Customer Data</option><option value="2">Customer Records &gt; Date</option></select>
+                                            <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.column" required="required">
+                                                <option value="" disabled selected>Please Choose</option>
+                                                <option v-for="(col, index) in filterColumnList()" :key="index" :value="col">{{ col.table_name }} &gt; {{ col.column_name }}</option>
+                                            </select>
                                         </div>
                                     </td>
                                     <td>
-                                        <select class="form-control" v-model="filter.value3">
-                                            <option value="">Select</option>
-                                            <option v-for="(operators, index) in (filter.value2 == 1 ?numbers_type_operator : filter.value2 == 2 ? date_type_operator : strings_type_operator)" :key="index" :value="operators.value">{{ operators.name }}</option>
+                                        <select v-if="filter.column != ''" class="form-control" v-model="filter.operator_type">
+                                            <option :value="null" disabled selected>Select</option>
+                                            <option v-for="(operators, index) in (numeric_data_types.includes(filter.column.data_type) ? numbers_type_operator : date_and_time_data_types.includes(filter.column.data_type) ? date_type_operator : strings_type_operator)" :key="index" :value="operators.value">{{ operators.name }}</option>
                                         </select>
                                     </td>
                                     <td>
-                                        <div v-if="filter.value3 != 'between'" class="form-group">
-                                            <input :class="[(filter.value3 == 'is blank' || filter.value3 == 'is not blank') ? 'form-control d-none' : 'form-control']" :type="[filter.value2 == 1 ? 'number' : filter.value2 == 2 ? 'date' : 'text']" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.value4" required="required" />
-                                        </div>
-                                        <div v-else class="form-group d-flex align-items-center">
-                                            <input :class="[(filter.value3 == 'is blank' || filter.value3 == 'is not blank') ? 'form-control d-none' : 'form-control']" :type="[filter.value2 == 1 ? 'number' : filter.value2 == 2 ? 'date' : 'text']" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.value4" required="required" />
-                                            <span class="text-center fw-bold fs-5 mx-2">~</span>
-                                            <input :class="[(filter.value3 == 'is blank' || filter.value3 == 'is not blank') ? 'form-control d-none' : 'form-control']" :type="[filter.value2 == 1 ? 'number' : filter.value2 == 2 ? 'date' : 'text']" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.value4" required="required" />
+                                        <div v-if="filter.operator_type != null">
+                                            <div class="form-group d-flex align-items-center">
+                                                <input :class="[(filter.operator_type == 'is blank' || filter.operator_type == 'is not blank') ? 'form-control d-none' : 'form-control']" :type="[numeric_data_types.includes(filter.column.data_type) ? 'number' : date_and_time_data_types.includes(filter.column.data_type) ? 'date' : 'text']" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.filter_value.one" required="required" />
+                                                <span v-if="filter.operator_type == 'between'" class="text-center fw-bold fs-5 mx-2">~</span>
+                                                <input v-if="filter.operator_type == 'between'" :class="[(filter.operator_type == 'is blank' || filter.operator_type == 'is not blank') ? 'form-control d-none' : 'form-control']" :type="[numeric_data_types.includes(filter.column.data_type) ? 'number' : date_and_time_data_types.includes(filter.column.data_type) ? 'date' : 'text']" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.filter_value.two" required="required" />
+                                            </div>
                                         </div>
                                     </td>
                                     <td>
                                         <span data-bind="visible: Field() &amp;&amp; Field().forced" class="badge badge-info" style="display: none;">Required Filter</span>
                                         <button @click="removeFilter(index)" class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
-                                        <!-- ko if: Field() && Field().fieldType == 'DateTime' && Operator() == 'range' && $root.canAddSeries() && $index()==0 --><!--/ko -->
                                     </td>
                                 </tr>
-                            <!-- ko foreach: compareTo --><!-- /ko -->
                         </tbody>
                     </table>
                 </div>
@@ -69,35 +70,59 @@
                     <table class="table table-hover table-borderless">
                         <thead>
                             <tr>
-                                <th style="width: 10%"></th>
-                                <th style="width: 30%">Field</th>
-                                <th style="width: 10%"></th>
-                                <th style="width: 30%">Filter</th>
+                                <th style="width: 35%">Primary Table Column</th>
+                                <th style="width: 4%"></th>
+                                <th style="width: 15%">Type of join</th>
+                                <th style="width: 4%"></th>
+                                <th style="width: 35%">Secondary Table Column</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="rule-container">
-                                <td>
-                                    <select class="form-control" style="display: none;">
-                                        <option>And</option>
-                                        <option>Or</option>
-                                    </select>
-                                </td>
+                            <tr class="rule-container" v-for="(join, index) in joins" :key="index">
                                 <td>
                                     <div class="form-group">
-                                        <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" required="required"><option value="">Please Choose</option><option value="">Customer Records &gt; Customer ID</option><option value="">Customer Records &gt; Customer Data</option><option value="">Customer Records &gt; Address</option></select>
+                                        <select class="form-control" style="width: 100%;"  required="required" v-model="join.from_column" @change="join.to_column= {}">
+                                            <option :value="join.from_column">
+                                                {{join.from_table}} &gt; {{ join.from_column.column_name }}
+                                            </option>
+                                            <option v-for="(col, i) in joinsPrimaryTable(join.from_table, join.from_column.column_name)" :key="i" :value="col">
+                                                {{join.from_table}} &gt; {{col.column_name}}
+                                            </option>
+                                        </select>
                                     </div>
                                 </td>
                                 <td data-bind="with: Field"></td>
+                                <td data-bind="with: Field">
+                                    <div class="form-group">
+                                        <select class="form-control" style="width: 100%;"  required="required" v-model="join.join_type">
+                                            <option :value="join.join_type">
+                                                {{ join.join_type }}
+                                            </option>
+                                            <option v-if="join.join_type != 'Left Join'" value="Left Join">Left Join</option>
+                                            <option v-if="join.join_type != 'Right Join'" value="Right Join">Right Join</option>
+                                            <option v-if="join.join_type != 'Inner Join'" value="Inner Join">Inner Join</option>
+                                        </select>
+                                    </div>
+                                </td>
                                 <td data-bind="with: Field"></td>
+                                <td data-bind="with: Field">
+                                    <div class="form-group">
+                                        <select class="form-control" style="width: 100%;"  required="required" v-model="join.to_column">
+                                            <option v-if="join.to_column.column_name" :value="join.to_column">
+                                                {{`${join.to_table} &gt; ${join.to_column.column_name}`}}
+                                            </option>
+                                            <option v-else disabled :value="join.to_column">Please Choose</option>
+                                            <option v-for="(col, i) in joinsSecondaryTable(join)" :key="i" :value="col">
+                                                {{col.column_name ? `${join.to_table} &gt; ${col.column_name}` : ''}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </td>
                                 <td>
-                                    <span data-bind="visible: Field() &amp;&amp; Field().forced" class="badge badge-info" style="display: none;">Required Filter</span>
-                                    <button class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
-                                    <!-- ko if: Field() && Field().fieldType == 'DateTime' && Operator() == 'range' && $root.canAddSeries() && $index()==0 --><!--/ko -->
+                                    <button @click="removeJoins(join.join_id, index)" class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
                                 </td>
                             </tr>
-                            <!-- ko foreach: compareTo --><!-- /ko -->
                         </tbody>
                     </table>
                 </div>
@@ -132,7 +157,45 @@
                                 <td>
                                     <span data-bind="visible: Field() &amp;&amp; Field().forced" class="badge badge-info" style="display: none;">Required Filter</span>
                                     <button class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
-                                    <!-- ko if: Field() && Field().fieldType == 'DateTime' && Operator() == 'range' && $root.canAddSeries() && $index()==0 --><!--/ko -->
+                                    <!-- ko if: Field() && Field().fieldType == 'DateTime' && Operator() == 'filter_value' && $root.canAddSeries() && $index()==0 --><!--/ko -->
+                                </td>
+                            </tr>
+                            <!-- ko foreach: compareTo --><!-- /ko -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-sort" role="tabpanel" aria-labelledby="nav-sort-tab">
+                <div class="query-builder">
+                    <table class="table table-hover table-borderless">
+                        <thead>
+                            <tr>
+                                <th style="width: 10%"></th>
+                                <th style="width: 30%">Field</th>
+                                <th style="width: 10%"></th>
+                                <th style="width: 30%">Filter</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="rule-container">
+                                <td>
+                                    <select class="form-control" style="display: none;">
+                                        <option>And</option>
+                                        <option>Or</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <div class="form-group">
+                                        <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" required="required"><option value="">Please Choose</option><option value="">Customer Records &gt; Customer ID</option><option value="">Customer Records &gt; Customer Data</option><option value="">Customer Records &gt; Address</option></select>
+                                    </div>
+                                </td>
+                                <td data-bind="with: Field"></td>
+                                <td data-bind="with: Field"></td>
+                                <td>
+                                    <span data-bind="visible: Field() &amp;&amp; Field().forced" class="badge badge-info" style="display: none;">Required Filter</span>
+                                    <button class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
+                                    <!-- ko if: Field() && Field().fieldType == 'DateTime' && Operator() == 'filter_value' && $root.canAddSeries() && $index()==0 --><!--/ko -->
                                 </td>
                             </tr>
                             <!-- ko foreach: compareTo --><!-- /ko -->
@@ -145,9 +208,18 @@
 </template>
 <script>
 export default {
+    props:[
+        'filters',
+        'joins',
+        'group_by',
+        'sort_by',
+        'addFilter',
+        'removeFilter',
+        'removeJoins',
+        'columns',
+    ],
   data() {
     return {
-      filters: [],
       numbers_type_operator: [
         {name: '=', value: '='},
         {name: '>', value: '>'},
@@ -178,18 +250,62 @@ export default {
         {name: 'is blank', value: 'is blank'},
         {name: 'is not blank', value: 'is not blank'},
       ],
+      numeric_data_types: [
+        'int',
+        'bigint',
+        'float',
+        'double',
+        'decimal',
+        'integer',
+        'smallint',
+        'numeric',
+        'real',
+        'double precision'
+      ],
+      date_and_time_data_types: [
+        'date',
+        'time',
+        'datetime',
+        'timestamp',
+        'timestamptz',
+        'interval'
+      ],
     };
   },
+  watch:{
+    /* 'joins': {
+        deep: true,
+        handler(x) {
+            console.log(x);
+        }
+    } */
+  },
   methods: {
-    addFilter() {
-      if (this.filters.length === 0) {
-        this.filters.push({ flag: false, value2: '', value3: '', value4: '' });
-      } else {
-        this.filters.push({ flag: true, value1:'and', value2: '', value3: '', value4: '' });
-      }
+    filterColumnList() {
+        let columnList = []
+        for (const column in this.columns) {
+            for (const el of this.columns[column]) {
+                columnList.push({
+                    ...el,
+                    table_name: column
+                })
+            }
+        }
+        return columnList;
     },
-    removeFilter(index) {
-      this.filters.splice(index, 1);
+    joinsPrimaryTable(from_table, selected_column) {
+        const columnList = this.columns[from_table].filter(column => column.column_name != selected_column);
+        return columnList;
+    },
+    joinsSecondaryTable(join) {
+        console.log(join)
+        let columnList = [];
+        if (join.to_column?.column_name != undefined) {
+            columnList = this.columns[join.to_table].filter(column=>column.data_type == join.from_column.data_type && column.column_name != join.to_column?.column_name);
+        } else {
+            columnList = this.columns[join.to_table].filter(column=>column.data_type == join.from_column.data_type);
+        }
+        return columnList;
     }
   }
 };
