@@ -107,6 +107,7 @@ export default {
   data() {
     return {
       tables_list:[],
+      orphan_tables:[],
       spin: false,
       columns:{},
       joins: [],
@@ -153,6 +154,14 @@ export default {
         type: 'custom',
       })
     })
+  },
+  watch:{
+    tables(x){
+      console.log(x);
+      if (!this.joins.length) {
+        this.orphan_tables = x.map(e => e.data.table_name)
+      }
+    },
   },
   computed:{
     id(){
@@ -249,12 +258,17 @@ export default {
     },
     async runReportData(){
       const connection = this.connections.find(e=>e.id == this.id);
-      const {data:{data, query}} = await axios.post('/get-report-data',{
+      const {data:{data, query,success, error_message}} = await axios.post('/get-report-data',{
         joins: this.joins,
+        table: this.joins.length >0 ? [] : this.orphan_tables,
         connection
       });
       const columns = data.length>0 ? Object.keys(data[0]) : ['No Data Found'];
-      this.setData(columns, data, query);
+      if (success) {
+        this.setData({columns, data, query});
+      } else {
+        this.setData({query, error_message});
+      }
       console.log(data);
     }
   },

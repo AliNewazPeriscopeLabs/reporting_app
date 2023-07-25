@@ -1,11 +1,13 @@
 <template>
   <div id="body">
     <router-view
+      :getConnectionList="getConnectionList"
       :connections="connections"
       :setConnectionList="setConnectionList"
       :columns="columns"
       :data_list="data_list"
       :setData="setData"
+      :query_error="query_error"
       :query="query"
     ></router-view>
   </div>
@@ -39,14 +41,16 @@ export default {
       formLoader: false,
       columns: [],
       data_list: [],
+      query_error: '',
       query:''
     }
   },
   methods:{
-    setData(columns, data, query ){
+    setData({columns=[], data=[], query='', error_message=''} ){
       this.columns = [...columns]
       this.data_list = [...data]
       this.query = query
+      this.query_error = error_message
     }
   }
 }
