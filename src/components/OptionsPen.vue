@@ -22,7 +22,7 @@
                                 <th></th>
                             </tr>
                         </thead>
-                        <tbody v-for="(filter, index) in filters_value" :key="index">
+                        <tbody v-for="(filter, index) in filters" :key="index">
                                 <tr class="rule-container">
                                     <td>
                                         <select :class="[filter.flag ? 'form-control rule-visible' : 'form-control']" style="display: none;" v-model="filter.and_or">
@@ -79,14 +79,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="rule-container" v-for="(join, index) in joins_value" :key="index">
+                            <tr class="rule-container" v-for="(join, index) in joins" :key="index">
                                 <td>
                                     <div class="form-group">
-                                        <select class="form-control" style="width: 100%;"  required="required" v-model="join.from_column.column_name">
-                                            <option :value="join.from_column.column_name">
+                                        <select class="form-control" style="width: 100%;"  required="required" v-model="join.from_column" @change="join.to_column= {}">
+                                            <option :value="join.from_column">
                                                 {{join.from_table}} &gt; {{ join.from_column.column_name }}
                                             </option>
-                                            <option v-for="(col, i) in joinsPrimaryTable(join.from_table, join.from_column.column_name)" :key="i" :value="col.column_name">
+                                            <option v-for="(col, i) in joinsPrimaryTable(join.from_table, join.from_column.column_name)" :key="i" :value="col">
                                                 {{join.from_table}} &gt; {{col.column_name}}
                                             </option>
                                         </select>
@@ -108,12 +108,13 @@
                                 <td data-bind="with: Field"></td>
                                 <td data-bind="with: Field">
                                     <div class="form-group">
-                                        <select class="form-control" style="width: 100%;"  required="required" v-model="join.to_column.column_name">
-                                            <option :value="join.to_column.column_name">
-                                                {{join.to_table}} &gt; {{ join.to_column.column_name }}
+                                        <select class="form-control" style="width: 100%;"  required="required" v-model="join.to_column">
+                                            <option v-if="join.to_column.column_name" :value="join.to_column">
+                                                {{`${join.to_table} &gt; ${join.to_column.column_name}`}}
                                             </option>
-                                            <option v-for="(col, i) in joinsSecondaryTable(join.to_table, join.from_column.data_type, join.to_column.column_name)" :key="i" :value="col.column_name">
-                                                {{join.to_table}} &gt; {{col.column_name}}
+                                            <option v-else disabled :value="join.to_column">Please Choose</option>
+                                            <option v-for="(col, i) in joinsSecondaryTable(join)" :key="i" :value="col">
+                                                {{col.column_name ? `${join.to_table} &gt; ${col.column_name}` : ''}}
                                             </option>
                                         </select>
                                     </div>
@@ -208,16 +209,17 @@
 <script>
 export default {
     props:[
+        'filters',
         'joins',
+        'group_by',
+        'sort_by',
+        'addFilter',
+        'removeFilter',
         'removeJoins',
-        'columns'
+        'columns',
     ],
   data() {
     return {
-      filters_value: [],
-      joins_value: this.joins,
-      group_by_value: [],
-      sort_by_value: [],
       numbers_type_operator: [
         {name: '=', value: '='},
         {name: '>', value: '>'},
@@ -271,16 +273,14 @@ export default {
     };
   },
   watch:{
-    
+    /* 'joins': {
+        deep: true,
+        handler(x) {
+            console.log(x);
+        }
+    } */
   },
   methods: {
-    addFilter() {
-      if (this.filters_value.length === 0) {
-        this.filters_value.push({ flag: false, column: '', operator_type: null, filter_value: {}  });
-      } else {
-        this.filters_value.push({ flag: true, and_or:'and', column: '', operator_type: null, filter_value: {} });
-      }
-    },
     filterColumnList() {
         let columnList = []
         for (const column in this.columns) {
@@ -293,15 +293,18 @@ export default {
         }
         return columnList;
     },
-    removeFilter(index) {
-      this.filters_value.splice(index, 1);
-    },
     joinsPrimaryTable(from_table, selected_column) {
         const columnList = this.columns[from_table].filter(column => column.column_name != selected_column);
         return columnList;
     },
-    joinsSecondaryTable(to_table, data_type, selected_column) {
-        const columnList = this.columns[to_table].filter(column=>column.data_type == data_type && column.column_name != selected_column);
+    joinsSecondaryTable(join) {
+        console.log(join)
+        let columnList = [];
+        if (join.to_column?.column_name != undefined) {
+            columnList = this.columns[join.to_table].filter(column=>column.data_type == join.from_column.data_type && column.column_name != join.to_column?.column_name);
+        } else {
+            columnList = this.columns[join.to_table].filter(column=>column.data_type == join.from_column.data_type);
+        }
         return columnList;
     }
   }

@@ -31,7 +31,12 @@
         <Background/>  
       </VueFlow>
       <OptionsPen 
-        :joins="joins" 
+        :filters="filters"
+        :joins="joins"
+        :group_by="group_by"
+        :sort_by="sort_by"
+        :addFilter="addFilter"
+        :removeFilter="removeFilter"
         :removeJoins="removeJoins"
         :columns="columns"
       />
@@ -115,7 +120,10 @@ export default {
       columns:{},
       joins: [],
       s_table: '',
-      t_table: ''
+      t_table: '',
+      filters: [],
+      group_by: [],
+      sort_by: [],
     }
   },
   components:{
@@ -177,8 +185,9 @@ export default {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     },
     createJoin(x){
-      x.join_id = this.tables[this.tables.length-1].join_id;
-      this.joins.push(x);
+      const joinData = JSON.parse(JSON.stringify(x))
+      joinData.join_id = this.tables[this.tables.length-1].join_id;
+      this.joins.push(joinData);
       this.joinModal = false;
     },
     getConnectedTables(s_table, t_table){
@@ -229,6 +238,16 @@ export default {
     removeJoin(){
       this.joinModal = false;
       this.tables.pop();
+    },
+    addFilter() {
+      if (this.filters.length === 0) {
+        this.filters.push({ flag: false, column: '', operator_type: null, filter_value: {}  });
+      } else {
+        this.filters.push({ flag: true, and_or:'and', column: '', operator_type: null, filter_value: {} });
+      }
+    },
+    removeFilter(index) {
+      this.filters.splice(index, 1);
     },
     removeJoins(join_id, index) {
       this.joins.splice(index, 1);
