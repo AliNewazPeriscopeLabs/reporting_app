@@ -60,7 +60,7 @@ import axios from 'axios';
 import ConfirmAlert from './modal/ConfirmAlert.vue'
 import toastr from '@/utils/toaster';
 export default {
-  props:['connections'],
+  props:['connections','getConnectionList'],
   components:{
     ConnectionCreate,
     spinner,

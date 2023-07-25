@@ -57,8 +57,12 @@
           {{ query }}
         </pre>
       </div>
+      <div v-if="query_error" class="error-message">
+        <h5>Error: MySQL Query</h5>
+        <p>{{ query_error }}</p>
+      </div>
     </div>
-    <div class="table-responsive mt-5" style="height: 80vh;">
+    <div v-if="!query_error" class="table-responsive mt-5" style="height: 80vh;">
       <table class="table table-striped border border-1">
         <thead>
           <tr>
@@ -83,6 +87,7 @@ export default {
   props:[
     'columns',
     'query',
+    'query_error',
     'data_list'
   ],
   computed: {
@@ -113,4 +118,20 @@ export default {
 /* .form-floating > .form-control, .form-floating > .form-select {
     height: calc(3rem + 2px) !important;
 } */
+.error-message {
+  border: 1px solid #ff0000;
+  background-color: #ffeeee;
+  color: #ff0000;
+  padding: 10px;
+  margin: 10px;
+  width: 300px;
+}
+
+.error-message h3 {
+  margin-top: 0;
+}
+
+.error-message p {
+  margin-bottom: 0;
+}
 </style>

@@ -17,7 +17,7 @@ import { Handle, Position } from '@vue-flow/core'
     </div>
     <template v-if="columns[data.table_name]?.length">
       <div v-for="(col, i) in columns[data.table_name]" :key="i" class="form-check">
-          <input class="form-check-input" type="checkbox" value="" :id="`${data.table_name}_${col.column_name}_${i}`">
+          <input v-model="selectedColumns" class="form-check-input" type="checkbox" :value="`${data.table_name}.${col.column_name}`" :id="`${data.table_name}_${col.column_name}_${i}`">
           <label class="form-check-label" :for="`${data.table_name}_${col.column_name}_${i}`">
               {{ col.column_name }}
           </label>
@@ -39,7 +39,12 @@ export default {
   props:[
     'data',
     'columns',
-  ]
+  ],
+  data() {
+    return {
+      selectedColumns:[]
+    }
+  },
 }
 </script>
 <style >

@@ -1,12 +1,17 @@
 <template>
   <div id="body">
     <router-view
+      :getConnectionList="getConnectionList"
       :connections="connections"
-      :setConnectionList="setConnectionList"
       :columns="columns"
       :data_list="data_list"
       :setData="setData"
+      :query_error="query_error"
       :query="query"
+      :setMappedTable="setMappedTable"
+      :mappedTable="mappedTable"
+      :setSavedColumns="setSavedColumns"
+      :savedColumns="savedTableColumns"
     ></router-view>
   </div>
 </template>
@@ -39,14 +44,24 @@ export default {
       formLoader: false,
       columns: [],
       data_list: [],
-      query:''
+      query_error: '',
+      query:'',
+      mappedTable: [],
+      savedTableColumns: {}
     }
   },
   methods:{
-    setData(columns, data, query ){
+    setData({columns=[], data=[], query='', error_message=''} ){
       this.columns = [...columns]
       this.data_list = [...data]
       this.query = query
+      this.query_error = error_message
+    },
+    setMappedTable(table=[]){
+      this.mappedTable = [...table]
+    },
+    setSavedColumns(columns={}){
+      this.savedTableColumns = {...columns}
     }
   }
 }

@@ -4,6 +4,8 @@
       :tables_list="tables_list"
       :getColumns="getColumns" 
       :columns="columns"
+      :setMappedTable="setMappedTable"
+      :setSavedColumns="setSavedColumns"
     />
     <div class="d-flex flex-column justify-content-center align-items-center w-100" style="height: 100vh;">
       <VueFlow 
@@ -12,6 +14,7 @@
       >
         <template #node-custom="{ data }">
           <TableNode 
+            ref="node"
             :data="data"
             :columns="columns"  
           />
@@ -120,6 +123,7 @@ export default {
   data() {
     return {
       tables_list:[],
+      orphan_tables:[],
       spin: false,
       columns:{},
       joins: [],
@@ -142,7 +146,11 @@ export default {
   },
   props:[
     'connections',
-    'setData'
+    'setData',
+    'mappedTable',
+    'setSavedColumns',
+    'savedColumns',
+    'setMappedTable'
   ],
   created() {
     this.getTablesList()
@@ -169,6 +177,22 @@ export default {
         type: 'custom',
       })
     })
+  },
+  mounted() {
+    if (this.mappedTable.length>0) {
+      this.tables = [...this.mappedTable]
+    }
+    if (this.savedColumns) {
+      this.columns = {...this.savedColumns}
+    }
+  },
+  watch:{
+    tables(x){
+      console.log(x);
+      if (!this.joins.length) {
+        this.orphan_tables = x.map(e => e.data.table_name)
+      }
+    },
   },
   computed:{
     id(){
@@ -291,13 +315,21 @@ export default {
       this.spin=false;
     },
     async runReportData(){
+      console.log(this.$refs.node);
+      this.setMappedTable(this.tables);
+      this.setSavedColumns(this.columns);
       const connection = this.connections.find(e=>e.id == this.id);
-      const {data:{data, query}} = await axios.post('/get-report-data',{
+      const {data:{data, query,success, error_message}} = await axios.post('/get-report-data',{
         joins: this.joins,
+        table: this.joins.length >0 ? [] : this.orphan_tables,
         connection
       });
       const columns = data.length>0 ? Object.keys(data[0]) : ['No Data Found'];
-      this.setData(columns, data, query);
+      if (success) {
+        this.setData({columns, data, query});
+      } else {
+        this.setData({query, error_message});
+      }
       console.log(data);
     }
   },
