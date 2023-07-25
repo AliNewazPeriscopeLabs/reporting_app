@@ -38,6 +38,10 @@
         :addFilter="addFilter"
         :removeFilter="removeFilter"
         :removeJoins="removeJoins"
+        :addGroupBy="addGroupBy"
+        :removeGroupBy="removeGroupBy"
+        :addSortBy="addSortBy"
+        :removeSortBy="removeSortBy"
         :columns="columns"
       />
     </div>
@@ -260,6 +264,18 @@ export default {
     // addJoinId(id){
     //   this.joins[this.joins.length-1].join_id = id;
     // },
+    addGroupBy() {
+      this.group_by.push({ column: {}, value: 'group by'  });
+    },
+    removeGroupBy(index) {
+      this.group_by.splice(index, 1);
+    },
+    addSortBy() {
+      this.sort_by.push({ column: {}, value: 'order by', order: 'asc'  });
+    },
+    removeSortBy(index) {
+      this.sort_by.splice(index, 1);
+    },
     async getTablesList(){
       this.spin=true;
       const { data:{ data } } = await axios.get('/get-tables?connection_id='+this.id);
