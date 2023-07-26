@@ -4,7 +4,7 @@
         <nav>
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
                 <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Filters</button>
-                <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Joins</button>
+                <button v-if="joins.length > 0" class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Joins</button>
                 <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Group By</button>
                 <button class="nav-link" id="nav-sort-tab" data-bs-toggle="tab" data-bs-target="#nav-sort" type="button" role="tab" aria-controls="nav-sort" aria-selected="false">Sort By</button>
             </div>
@@ -26,15 +26,17 @@
                                 <tr class="rule-container">
                                     <td>
                                         <select :class="[filter.flag ? 'form-control rule-visible' : 'form-control']" style="display: none;" v-model="filter.and_or">
-                                            <option value="and">And</option>
-                                            <option value="or">Or</option>
+                                            <option value="AND">And</option>
+                                            <option value="OR">Or</option>
                                         </select>
                                     </td>
                                     <td>
                                         <div class="form-group">
                                             <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.column" required="required">
                                                 <option value="" disabled selected>Please Choose</option>
-                                                <option v-for="(col, index) in filterColumnList()" :key="index" :value="col">{{ col.table_name }} &gt; {{ col.column_name }}</option>
+                                                <option v-for="(col, index) in columnList()" :key="index" :value="col">
+                                                    {{ col.column_name ? `${col.table_name} &gt; ${col.column_name}` : '' }}
+                                                </option>
                                             </select>
                                         </div>
                                     </td>
@@ -53,7 +55,7 @@
                                             </div>
                                         </div>
                                     </td>
-                                    <td>
+                                    <td class="align-middle">
                                         <span data-bind="visible: Field() &amp;&amp; Field().forced" class="badge badge-info" style="display: none;">Required Filter</span>
                                         <button @click="removeFilter(index)" class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
                                     </td>
@@ -72,7 +74,7 @@
                             <tr>
                                 <th style="width: 35%">Primary Table Column</th>
                                 <th style="width: 4%"></th>
-                                <th style="width: 15%">Type of join</th>
+                                <th style="width: 15%">Type of Join</th>
                                 <th style="width: 4%"></th>
                                 <th style="width: 35%">Secondary Table Column</th>
                                 <th></th>
@@ -109,17 +111,17 @@
                                 <td data-bind="with: Field">
                                     <div class="form-group">
                                         <select class="form-control" style="width: 100%;"  required="required" v-model="join.to_column">
+                                            <option disabled :value="{}">Please Choose</option>
                                             <option v-if="join.to_column.column_name" :value="join.to_column">
                                                 {{`${join.to_table} &gt; ${join.to_column.column_name}`}}
                                             </option>
-                                            <option v-else disabled :value="join.to_column">Please Choose</option>
                                             <option v-for="(col, i) in joinsSecondaryTable(join)" :key="i" :value="col">
                                                 {{col.column_name ? `${join.to_table} &gt; ${col.column_name}` : ''}}
                                             </option>
                                         </select>
                                     </div>
                                 </td>
-                                <td>
+                                <td class="align-middle">
                                     <button @click="removeJoins(join.join_id, index)" class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
                                 </td>
                             </tr>
@@ -132,37 +134,32 @@
                     <table class="table table-hover table-borderless">
                         <thead>
                             <tr>
-                                <th style="width: 10%"></th>
-                                <th style="width: 30%">Field</th>
-                                <th style="width: 10%"></th>
-                                <th style="width: 30%">Filter</th>
+                                <th style="width: 40%">Column Field</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="rule-container">
-                                <td>
-                                    <select class="form-control" style="display: none;">
-                                        <option>And</option>
-                                        <option>Or</option>
-                                    </select>
-                                </td>
+                            <tr v-for="(gb, i) in group_by" :key="i" class="rule-container">
                                 <td>
                                     <div class="form-group">
-                                        <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" required="required"><option value="">Please Choose</option><option value="">Customer Records &gt; Customer ID</option><option value="">Customer Records &gt; Customer Data</option><option value="">Customer Records &gt; Address</option></select>
+                                        <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" required="required" v-model="gb.column">
+                                            <option :value="{}" disabled>Please Choose</option>
+                                            <option v-for="(col, index) in columnList()" :key="index" :value="col">
+                                                {{ col.column_name ? `${col.table_name} &gt; ${col.column_name}` : '' }}
+                                            </option>
+                                        </select>
                                     </div>
                                 </td>
-                                <td data-bind="with: Field"></td>
-                                <td data-bind="with: Field"></td>
-                                <td>
+                                <td class="align-middle">
                                     <span data-bind="visible: Field() &amp;&amp; Field().forced" class="badge badge-info" style="display: none;">Required Filter</span>
-                                    <button class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
-                                    <!-- ko if: Field() && Field().fieldType == 'DateTime' && Operator() == 'filter_value' && $root.canAddSeries() && $index()==0 --><!--/ko -->
+                                    <button @click="removeGroupBy(i)" class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
                                 </td>
                             </tr>
-                            <!-- ko foreach: compareTo --><!-- /ko -->
                         </tbody>
                     </table>
+                </div>
+                <div class="d-flex p-1 bg-light">
+                    <button @click="addGroupBy" class="btn btn-primary">Add Group By</button>
                 </div>
             </div>
             <div class="tab-pane fade" id="nav-sort" role="tabpanel" aria-labelledby="nav-sort-tab">
@@ -170,37 +167,39 @@
                     <table class="table table-hover table-borderless">
                         <thead>
                             <tr>
-                                <th style="width: 10%"></th>
-                                <th style="width: 30%">Field</th>
-                                <th style="width: 10%"></th>
-                                <th style="width: 30%">Filter</th>
+                                <th style="width: 40%">Column Field</th>
+                                <th style="width: 12%">Order</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="rule-container">
-                                <td>
-                                    <select class="form-control" style="display: none;">
-                                        <option>And</option>
-                                        <option>Or</option>
-                                    </select>
-                                </td>
+                            <tr v-for="(sb, i) in sort_by" :key="i" class="rule-container">
                                 <td>
                                     <div class="form-group">
-                                        <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" required="required"><option value="">Please Choose</option><option value="">Customer Records &gt; Customer ID</option><option value="">Customer Records &gt; Customer Data</option><option value="">Customer Records &gt; Address</option></select>
+                                        <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" required="required" v-model="sb.column">
+                                            <option :value="{}" disabled>Please Choose</option>
+                                            <option v-for="(col, index) in columnList()" :key="index" :value="col">
+                                                {{ col.column_name ? `${col.table_name} &gt; ${col.column_name}` : '' }}
+                                            </option>
+                                        </select>
                                     </div>
                                 </td>
-                                <td data-bind="with: Field"></td>
-                                <td data-bind="with: Field"></td>
                                 <td>
+                                    <select :class="[sb.column.column_name ? 'form-control rule-visible' : 'form-control']" style="display: none;" v-model="sb.order">
+                                        <option value="asc">ASC</option>
+                                        <option value="desc">DESC</option>
+                                    </select>
+                                </td>
+                                <td class="align-middle">
                                     <span data-bind="visible: Field() &amp;&amp; Field().forced" class="badge badge-info" style="display: none;">Required Filter</span>
-                                    <button class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
-                                    <!-- ko if: Field() && Field().fieldType == 'DateTime' && Operator() == 'filter_value' && $root.canAddSeries() && $index()==0 --><!--/ko -->
+                                    <button @click="removeSortBy(i)" class="btn btn-sm btn-secondary" data-bind="click: $parent.RemoveFilter, hidden: Field() &amp;&amp; Field().forced">Remove</button>
                                 </td>
                             </tr>
-                            <!-- ko foreach: compareTo --><!-- /ko -->
                         </tbody>
                     </table>
+                </div>
+                <div class="d-flex p-1 bg-light">
+                    <button @click="addSortBy" class="btn btn-primary">Add Sort By</button>
                 </div>
             </div>
         </div>
@@ -216,6 +215,10 @@ export default {
         'addFilter',
         'removeFilter',
         'removeJoins',
+        'addGroupBy',
+        'removeGroupBy',
+        'addSortBy',
+        'removeSortBy',
         'columns',
     ],
   data() {
@@ -272,16 +275,8 @@ export default {
       ],
     };
   },
-  watch:{
-    /* 'joins': {
-        deep: true,
-        handler(x) {
-            console.log(x);
-        }
-    } */
-  },
   methods: {
-    filterColumnList() {
+    columnList() {
         let columnList = []
         for (const column in this.columns) {
             for (const el of this.columns[column]) {

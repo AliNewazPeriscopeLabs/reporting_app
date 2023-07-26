@@ -76,7 +76,7 @@ export default {
       this.savedJoins= join
     },
     setFilters(filters=[]){
-      this.filter = filters
+      this.filters = filters
     },
     setSelectedColumns(columns){
       this.selectedColumns = [...new Set([...this.selectedColumns, ...columns])];

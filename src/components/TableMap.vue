@@ -7,6 +7,7 @@
       :setMappedTable="setMappedTable"
       :setSavedColumns="setSavedColumns"
       :setFilters="setFilters"
+      :db_name="db_name"
     />
     <div class="d-flex flex-column justify-content-center align-items-center w-100" style="height: 100vh;">
       <VueFlow 
@@ -43,6 +44,10 @@
         :addFilter="addFilter"
         :removeFilter="removeFilter"
         :removeJoins="removeJoins"
+        :addGroupBy="addGroupBy"
+        :removeGroupBy="removeGroupBy"
+        :addSortBy="addSortBy"
+        :removeSortBy="removeSortBy"
         :columns="columns"
       />
     </div>
@@ -207,7 +212,6 @@ export default {
       } 
       return null;
     }
-
   },
   methods: {
     getRandomArbitrary(min, max) {
@@ -284,6 +288,22 @@ export default {
     // addJoinId(id){
     //   this.joins[this.joins.length-1].join_id = id;
     // },
+    addGroupBy() {
+      this.group_by.push({ column: {}, value: 'group by'  });
+    },
+    removeGroupBy(index) {
+      this.group_by.splice(index, 1);
+    },
+    addSortBy() {
+      this.sort_by.push({ column: {}, value: 'order by', order: 'asc'  });
+    },
+    removeSortBy(index) {
+      this.sort_by.splice(index, 1);
+    },
+    db_name(){
+      const default_db = this.connections.find(e=>e.id == this.id)?.default_db
+      return default_db
+    },
     async getTablesList(){
       this.spin=true;
       const { data:{ data } } = await axios.get('/get-tables?connection_id='+this.id);

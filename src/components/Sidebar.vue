@@ -1,7 +1,7 @@
 <template>
   <aside>
     <div class="description text-secondary fs-6">
-      <i class="fa-solid fa-database me-2"></i>report_builder
+      <i class="fa-solid fa-database me-2"></i>{{ db_name() }}
     </div>
 
     <div class="accordion accordion-flush" id="accordionFlushExample">
@@ -138,7 +138,8 @@ export default {
     'savedColumns',
     'setSavedColumns',
     'setFilters',
-    'setMappedTable'
+    'setMappedTable',
+    'db_name'
   ],
   methods: {
   },
