@@ -101,6 +101,7 @@ export default {
       this.savedJoins = [];
       this.group_by = [];
       this.sort_by = [];
+      this.selectedColumns = [];
     },
     setSelectedColumns(columns){
       const table = columns[0].split('.').shift()
