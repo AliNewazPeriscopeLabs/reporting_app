@@ -39,12 +39,18 @@ export default {
   props:[
     'data',
     'columns',
+    'setSelectedColumns'
   ],
   data() {
     return {
       selectedColumns:[]
     }
   },
+  watch:{
+    selectedColumns(x){
+      this.setSelectedColumns(x)
+    }
+  }
 }
 </script>
 <style >

@@ -7,6 +7,7 @@
       :setMappedTable="setMappedTable"
       :setSavedColumns="setSavedColumns"
       :db_name="db_name"
+      :setFilters="setFilters"
     />
     <div class="d-flex flex-column justify-content-center align-items-center w-100" style="height: 100vh;">
       <VueFlow 
@@ -18,6 +19,7 @@
             ref="node"
             :data="data"
             :columns="columns"  
+            :setSelectedColumns="setSelectedColumns"
           />
         </template>
         <Panel :position="PanelPosition.TopRight" class="controls">
@@ -130,7 +132,6 @@ export default {
       joins: [],
       s_table: '',
       t_table: '',
-      filters: [],
       group_by: [],
       sort_by: [],
     }
@@ -151,6 +152,14 @@ export default {
     'mappedTable',
     'setSavedColumns',
     'savedColumns',
+    'selectedColumns',
+    'setSelectedColumns',
+    'savedJoins',
+    'setSavedJoins',
+    'filters',
+    'addFilter',
+    'removeFilter',
+    'setFilters',
     'setMappedTable'
   ],
   created() {
@@ -160,7 +169,6 @@ export default {
       const joinId = this.getRandomInt(1000, 1999);
       this.joinModal = true;
       
-      console.log(params);
       const s_table_parts = params.source.split('_')
       s_table_parts.pop();
       this.s_table = s_table_parts.join('_');
@@ -183,13 +191,15 @@ export default {
     if (this.mappedTable.length>0) {
       this.tables = [...this.mappedTable]
     }
+    if (this.savedJoins.length>0) {
+      this.joins = [...this.savedJoins]
+    }
     if (this.savedColumns) {
       this.columns = {...this.savedColumns}
     }
   },
   watch:{
     tables(x){
-      console.log(x);
       if (!this.joins.length) {
         this.orphan_tables = x.map(e => e.data.table_name)
       }
@@ -267,16 +277,6 @@ export default {
       this.joinModal = false;
       this.tables.pop();
     },
-    addFilter() {
-      if (this.filters.length === 0) {
-        this.filters.push({ flag: false, column: '', operator_type: null, filter_value: {}  });
-      } else {
-        this.filters.push({ flag: true, and_or:'and', column: '', operator_type: null, filter_value: {} });
-      }
-    },
-    removeFilter(index) {
-      this.filters.splice(index, 1);
-    },
     removeJoins(join_id, index) {
       this.joins.splice(index, 1);
       this.tables = this.tables.filter(e => e.join_id != join_id);
@@ -319,13 +319,15 @@ export default {
       this.spin=false;
     },
     async runReportData(){
-      console.log(this.$refs.node);
+      this.setSavedJoins(this.joins);
       this.setMappedTable(this.tables);
       this.setSavedColumns(this.columns);
       const connection = this.connections.find(e=>e.id == this.id);
       const {data:{data, query,success, error_message}} = await axios.post('/get-report-data',{
         joins: this.joins,
         table: this.joins.length >0 ? [] : this.orphan_tables,
+        selecedCols: this.selectedColumns,
+        filters: this.filters,
         connection
       });
       const columns = data.length>0 ? Object.keys(data[0]) : ['No Data Found'];
@@ -334,7 +336,6 @@ export default {
       } else {
         this.setData({query, error_message});
       }
-      console.log(data);
     }
   },
 }
