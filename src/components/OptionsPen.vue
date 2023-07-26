@@ -67,7 +67,7 @@
                     <button @click="addFilter" class="btn btn-primary">Add Filter</button>
                 </div>
             </div>
-            <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+            <div v-if="joins.length > 0" class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
                 <div class="query-builder">
                     <table class="table table-hover table-borderless">
                         <thead>

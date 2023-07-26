@@ -25,7 +25,7 @@
         </template>
         <Panel :position="PanelPosition.TopRight" class="controls">
           <div class="d-flex justify-content-center align-items-center">
-            <router-link @click="runReportData" :to="{ name: 'preview', query:{ id: id } }" class="btn btn-outline-primary btn-sm me-2">
+            <router-link v-show="tables.length > 0" @click="runReportData" :to="{ name: 'preview', query:{ id: id } }" class="btn btn-outline-primary btn-sm me-2">
               Preview
             </router-link>
             <button style="background-color: #113285; color: white" title="Reset Transform" @click="resetTransform(), setEmpty()">
