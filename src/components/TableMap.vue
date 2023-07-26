@@ -19,6 +19,7 @@
             ref="node"
             :data="data"
             :columns="columns"  
+            :preSelectedColumns="selectedColumns"  
             :setSelectedColumns="setSelectedColumns"
           />
         </template>

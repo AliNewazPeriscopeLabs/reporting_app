@@ -95,6 +95,7 @@
 </template>
   
 <script>
+import axios from 'axios';
 import spinner from './loader/spinner.vue';
 import toastr from '@/utils/toaster';
 export default {
@@ -154,6 +155,42 @@ export default {
     
   },
   methods: {
+    async exportXls(){
+      const {data:{data}} = await axios.post('/get-excel',{
+          datalist: this.data_list,
+          columns: this.columns
+        })
+        let a = document.createElement('A');
+        a.href = process.env.VUE_APP_BACKEND_HOST+data;
+        a.download = data.substr(data.lastIndexOf('/') + 1);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    },
+    async exportPdf(){
+      const {data:{data}} = await axios.post('/get-pdf',{
+          datalist: this.data_list,
+          columns: this.columns
+        })
+        let a = document.createElement('A');
+        a.href = process.env.VUE_APP_BACKEND_HOST+data;
+        a.download = data.substr(data.lastIndexOf('/') + 1);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    },
+    async exportCsv(){
+      const {data:{data}} = await axios.post('/get-csv',{
+          datalist: this.data_list,
+          columns: this.columns
+        })
+        let a = document.createElement('A');
+        a.href = process.env.VUE_APP_BACKEND_HOST+data;
+        a.download = data.substr(data.lastIndexOf('/') + 1);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    },
     async saveReport() {
       this.spin = true;
       const data_model = this.getDataModels()

@@ -39,6 +39,7 @@ export default {
   props:[
     'data',
     'columns',
+    'preSelectedColumns',
     'setSelectedColumns'
   ],
   data() {
@@ -46,9 +47,19 @@ export default {
       selectedColumns:[]
     }
   },
+  mounted() {
+    if (this.preSelectedColumns.length>0) {
+      this.selectedColumns = this.preSelectedColumns.filter(e=>{
+        const table = e.split('.').shift();
+        return table === this.data.table_name
+      })
+    }
+  },
   watch:{
     selectedColumns(x){
-      this.setSelectedColumns(x)
+      if (x.length>0) {
+        this.setSelectedColumns(x)
+      }
     }
   }
 }

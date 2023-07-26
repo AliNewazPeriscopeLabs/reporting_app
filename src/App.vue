@@ -103,6 +103,12 @@ export default {
       this.sort_by = [];
     },
     setSelectedColumns(columns){
+      const table = columns[0].split('.').shift()
+      this.selectedColumns = this.selectedColumns.filter(e=>{
+        const table_ = e.split('.').shift();
+        return table !== table_
+      })
+
       this.selectedColumns = [...new Set([...this.selectedColumns, ...columns])];
     },
     setData({columns=[], data=[], query='', error_message=''} ){
