@@ -49,9 +49,9 @@
                                     <td>
                                         <div v-if="filter.operator_type != null">
                                             <div class="form-group d-flex align-items-center">
-                                                <input :class="[(filter.operator_type == 'is blank' || filter.operator_type == 'is not blank') ? 'form-control d-none' : 'form-control']" :type="[numeric_data_types.includes(filter.column.data_type) ? 'number' : date_and_time_data_types.includes(filter.column.data_type) ? 'date' : 'text']" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.filter_value.one" required="required" />
+                                                <input :class="[(filter.operator_type == isBlank || filter.operator_type == isNotBlank) ? 'form-control d-none' : 'form-control']" :type="[numeric_data_types.includes(filter.column.data_type) ? 'number' : date_and_time_data_types.includes(filter.column.data_type) ? 'date' : 'text']" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.filter_value.one" required="required" />
                                                 <span v-if="filter.operator_type == 'between'" class="text-center fw-bold fs-5 mx-2">~</span>
-                                                <input v-if="filter.operator_type == 'between'" :class="[(filter.operator_type == 'is blank' || filter.operator_type == 'is not blank') ? 'form-control d-none' : 'form-control']" :type="[numeric_data_types.includes(filter.column.data_type) ? 'number' : date_and_time_data_types.includes(filter.column.data_type) ? 'date' : 'text']" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.filter_value.two" required="required" />
+                                                <input v-if="filter.operator_type == 'between'" :class="[(filter.operator_type == isBlank || filter.operator_type == isNotBlank) ? 'form-control d-none' : 'form-control']" :type="[numeric_data_types.includes(filter.column.data_type) ? 'number' : date_and_time_data_types.includes(filter.column.data_type) ? 'date' : 'text']" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.filter_value.two" required="required" />
                                             </div>
                                         </div>
                                     </td>
@@ -229,18 +229,18 @@ export default {
         {name: '<', value: '<'},
         {name: '>=', value: '>='},
         {name: '<=', value: '<='},
-        {name: 'not equal', value: 'not equal'},
+        {name: 'not equal', value: '!='},
         {name: 'between', value: 'between'},
-        {name: 'is blank', value: 'is blank'},
-        {name: 'is not blank', value: 'is not blank'},
+        {name: 'is blank', value: '= ""'},
+        {name: 'is not blank', value: '!= ""'},
       ],
       strings_type_operator: [
         {name: '=', value: '='},
         {name: 'like', value: 'like'},
         {name: 'not like', value: 'not like'},
-        {name: 'not equal', value: 'not equal'},
-        {name: 'is blank', value: 'is blank'},
-        {name: 'is not blank', value: 'is not blank'},
+        {name: 'not equal', value: '!='},
+        {name: 'is blank', value: '= ""'},
+        {name: 'is not blank', value: '!= ""'},
       ],
       date_type_operator: [
         {name: '=', value: '='},
@@ -248,10 +248,10 @@ export default {
         {name: '<', value: '<'},
         {name: '>=', value: '>='},
         {name: '<=', value: '<='},
-        {name: 'not equal', value: 'not equal'},
+        {name: 'not equal', value: '!='},
         {name: 'between', value: 'between'},
-        {name: 'is blank', value: 'is blank'},
-        {name: 'is not blank', value: 'is not blank'},
+        {name: 'is blank', value: '= ""'},
+        {name: 'is not blank', value: '!= ""'},
       ],
       numeric_data_types: [
         'int',
@@ -273,6 +273,8 @@ export default {
         'timestamptz',
         'interval'
       ],
+      isBlank: '= ""',
+      isNotBlank: '!= ""'
     };
   },
   methods: {

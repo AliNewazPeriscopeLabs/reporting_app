@@ -91,6 +91,7 @@
     </div>
   </div>
   <spinner v-if="spin"></spinner>
+  <spinner v-if="data_list.length === 0"></spinner>
 </template>
   
 <script>
@@ -103,6 +104,10 @@ export default {
     'query_error',
     'data_list',
     'saveReportData',
+    'savedJoins',
+    'filters',
+    'group_by',
+    'sort_by'
   ],
   components:{
     spinner
@@ -114,7 +119,6 @@ export default {
       con_id: null,
       report_name: '',
       report_desc: '',
-      data_model: JSON.stringify([{'hello': '123'}]),
       errorList: {},
     }
   },
@@ -143,9 +147,6 @@ export default {
       if (this.query === "") {
         return true;
       }
-      if (this.data_model.length === 0) {
-        return true;
-      }
       return false;
     }
   },
@@ -155,9 +156,10 @@ export default {
   methods: {
     async saveReport() {
       this.spin = true;
+      const data_model = this.getDataModels()
       this.validationNameAndDesc();
       if (this.requiredCheck === false) {
-        const {success, message} = await this.saveReportData(this.con_id, this.report_name, this.report_desc, this.query, this.data_model)
+        const {success, message} = await this.saveReportData(this.con_id, this.report_name, this.report_desc, this.query, data_model)
         if (success) {
           toastr.success(message);
         } else {
@@ -165,6 +167,24 @@ export default {
         }
       }
       this.spin = false;
+    },
+    getDataModels() {
+      let data_model = []
+      if (
+        this.filters.length > 0 || 
+        this.savedJoins.length > 0 || 
+        this.group_by.length > 0 || 
+        this.sort_by.length > 0
+      ) {
+        const models = {
+          'filters': [...this.filters], 
+          'joins': [...this.savedJoins], 
+          'group_by': [...this.group_by], 
+          'sort_by': [...this.sort_by]
+        }
+        data_model = JSON.stringify(models)
+      }
+      return data_model
     },
     validationNameAndDesc() {
       if(this.report_name === '') {

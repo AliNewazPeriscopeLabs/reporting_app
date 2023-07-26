@@ -98,6 +98,7 @@ export default {
     },
     setEmpty(){
       this.filters = [];
+      this.savedJoins = [];
       this.group_by = [];
       this.sort_by = [];
     },
