@@ -26,8 +26,8 @@
                                 <tr class="rule-container">
                                     <td>
                                         <select :class="[filter.flag ? 'form-control rule-visible' : 'form-control']" style="display: none;" v-model="filter.and_or">
-                                            <option value="and">And</option>
-                                            <option value="or">Or</option>
+                                            <option value="AND">And</option>
+                                            <option value="OR">Or</option>
                                         </select>
                                     </td>
                                     <td>

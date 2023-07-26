@@ -7,7 +7,7 @@
       :setMappedTable="setMappedTable"
       :setSavedColumns="setSavedColumns"
       :db_name="db_name"
-      :setFilters="setFilters"
+      :setEmpty="setEmpty"
     />
     <div class="d-flex flex-column justify-content-center align-items-center w-100" style="height: 100vh;">
       <VueFlow 
@@ -132,8 +132,6 @@ export default {
       joins: [],
       s_table: '',
       t_table: '',
-      group_by: [],
-      sort_by: [],
     }
   },
   components:{
@@ -157,16 +155,22 @@ export default {
     'savedJoins',
     'setSavedJoins',
     'filters',
+    'addGroupBy',
+    'removeGroupBy',
     'addFilter',
     'removeFilter',
-    'setFilters',
+    'setEmpty',
+    'group_by',
+    'sort_by',
+    'addSortBy',
+    'removeSortBy',
     'setMappedTable'
   ],
   created() {
     this.getTablesList()
     
     this.onConnect((params) =>{
-      const joinId = this.getRandomInt(1000, 1999);
+      const joinId = this.getRandomInt(1000, 2999);
       this.joinModal = true;
       
       const s_table_parts = params.source.split('_')
@@ -288,18 +292,6 @@ export default {
     // addJoinId(id){
     //   this.joins[this.joins.length-1].join_id = id;
     // },
-    addGroupBy() {
-      this.group_by.push({ column: {}, value: 'group by'  });
-    },
-    removeGroupBy(index) {
-      this.group_by.splice(index, 1);
-    },
-    addSortBy() {
-      this.sort_by.push({ column: {}, value: 'order by', order: 'asc'  });
-    },
-    removeSortBy(index) {
-      this.sort_by.splice(index, 1);
-    },
     db_name(){
       const default_db = this.connections.find(e=>e.id == this.id)?.default_db
       return default_db
@@ -325,6 +317,8 @@ export default {
       const connection = this.connections.find(e=>e.id == this.id);
       const {data:{data, query,success, error_message}} = await axios.post('/get-report-data',{
         joins: this.joins,
+        sort_by: this.sort_by,
+        group_by: this.group_by,
         table: this.joins.length >0 ? [] : this.orphan_tables,
         selecedCols: this.selectedColumns,
         filters: this.filters,

@@ -5,7 +5,7 @@
         <i class="fa-solid fa-arrow-left me-2"></i>Table Map
       </router-link>
       <div class="d-flex justify-content-center align-items-center">
-        <button type="button" class="btn btn-outline-primary btn-sm shadow-none me-2">
+        <button @click.prevent="saveReport()" type="button" class="btn btn-outline-primary btn-sm shadow-none me-2">
           <i class="fa-solid fa-floppy-disk me-2"></i>Save
         </button>
         <div class="dropdown">
@@ -37,16 +37,26 @@
       </div>
       <div v-else>
         <div class="form-floating mb-0 w-50">
-          <input type="text" class="form-control" id="floating1" placeholder="Enter Your Report Name">
+          <input type="text" class="form-control" id="floating1" placeholder="Enter Your Report Name" v-model="report_name">
           <label for="floating1">
             <i class="fa-solid fa-file-invoice me-2"></i>Enter Your Report Name
           </label>
+          <div style="margin-left: 12px;">
+            <span class="text-danger" v-if="errorList['report_name']">
+              {{errorList['report_name']}}
+            </span>
+          </div>
         </div>
         <div class="form-floating w-50">
-          <input type="text" class="form-control" id="floating2" placeholder="Enter Your Report Description">
+          <input type="text" class="form-control" id="floating2" placeholder="Enter Your Report Description" v-model="report_desc">
           <label for="floating2">
             <i class="fa-solid fa-clipboard me-2"></i>Enter Your Report Description
           </label>
+          <div style="margin-left: 12px;">
+            <span class="text-danger" v-if="errorList['report_desc']">
+              {{errorList['report_desc']}}
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -80,36 +90,95 @@
       </table>
     </div>
   </div>
+  <spinner v-if="spin"></spinner>
 </template>
   
 <script>
+import spinner from './loader/spinner.vue';
+import toastr from '@/utils/toaster';
 export default {
   props:[
     'columns',
     'query',
     'query_error',
-    'data_list'
+    'data_list',
+    'saveReportData',
   ],
+  components:{
+    spinner
+  },
+  data() {
+    return {
+      report_has_info: false,
+      spin: false,
+      con_id: null,
+      report_name: '',
+      report_desc: '',
+      data_model: JSON.stringify([{'hello': '123'}]),
+      errorList: {},
+    }
+  },
+  created() {
+    this.con_id = this.id ? this.id : null;
+  },
+  mounted() {
+  },
   computed: {
     id(){
       if (this.$route && this.$route.query) {
         return this.$route.query.id
       } 
       return null;
+    },
+    requiredCheck() {
+      if (this.con_id === null) {
+        return true;
+      }
+      if (this.report_name === "") {
+        return true;
+      }
+      if (this.report_desc === "") {
+        return true;
+      }
+      if (this.query === "") {
+        return true;
+      }
+      if (this.data_model.length === 0) {
+        return true;
+      }
+      return false;
     }
-  },
-  data() {
-    return {
-      report_has_info: false
-    }
-  },
-  created() {
-  },
-  mounted() {
   },
   watch: {
+    
   },
   methods: {
+    async saveReport() {
+      this.spin = true;
+      this.validationNameAndDesc();
+      if (this.requiredCheck === false) {
+        const {success, message} = await this.saveReportData(this.con_id, this.report_name, this.report_desc, this.query, this.data_model)
+        if (success) {
+          toastr.success(message);
+        } else {
+          toastr.error(message);
+        }
+      }
+      this.spin = false;
+    },
+    validationNameAndDesc() {
+      if(this.report_name === '') {
+        this.errorList['report_name'] = 'Report Name is required'
+      } else {
+        this.errorList['report_name'] = null
+      }
+    
+      if(this.report_desc === '') {
+        this.errorList['report_desc'] = 'Report Description is required'
+      } else {
+        this.errorList['report_desc'] = null
+      }
+    }
   }
 }
 </script>
