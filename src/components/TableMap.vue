@@ -6,6 +6,7 @@
       :columns="columns"
       :setMappedTable="setMappedTable"
       :setSavedColumns="setSavedColumns"
+      :db_name="db_name"
     />
     <div class="d-flex flex-column justify-content-center align-items-center w-100" style="height: 100vh;">
       <VueFlow 
@@ -201,7 +202,6 @@ export default {
       } 
       return null;
     }
-
   },
   methods: {
     getRandomArbitrary(min, max) {
@@ -299,6 +299,10 @@ export default {
     },
     removeSortBy(index) {
       this.sort_by.splice(index, 1);
+    },
+    db_name(){
+      const default_db = this.connections.find(e=>e.id == this.id)?.default_db
+      return default_db
     },
     async getTablesList(){
       this.spin=true;
