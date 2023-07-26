@@ -91,7 +91,7 @@
     </div>
   </div>
   <spinner v-if="spin"></spinner>
-  <spinner v-if="data_list.length === 0"></spinner>
+  <spinner v-if="query_error === '' && data_list.length === 0"></spinner>
 </template>
   
 <script>
