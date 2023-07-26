@@ -12,6 +12,14 @@
       :mappedTable="mappedTable"
       :setSavedColumns="setSavedColumns"
       :savedColumns="savedTableColumns"
+      :selectedColumns="selectedColumns"
+      :setSelectedColumns="setSelectedColumns"
+      :savedJoins="savedJoins"
+      :setSavedJoins="setSavedJoins"
+      :filters="filters"
+      :addFilter="addFilter"
+      :removeFilter="removeFilter"
+      :setFilters="setFilters"
     ></router-view>
   </div>
 </template>
@@ -44,13 +52,35 @@ export default {
       formLoader: false,
       columns: [],
       data_list: [],
+      selectedColumns: [],
       query_error: '',
       query:'',
       mappedTable: [],
-      savedTableColumns: {}
+      savedTableColumns: {},
+      savedJoins: [],
+      filters: [],
     }
   },
   methods:{
+    addFilter() {
+      if (this.filters.length === 0) {
+        this.filters.push({ flag: false, column: '', operator_type: null, filter_value: {}  });
+      } else {
+        this.filters.push({ flag: true, and_or:'and', column: '', operator_type: null, filter_value: {} });
+      }
+    },
+    removeFilter(index) {
+      this.filters.splice(index, 1);
+    },
+    setSavedJoins(join){
+      this.savedJoins= join
+    },
+    setFilters(filters=[]){
+      this.filter = filters
+    },
+    setSelectedColumns(columns){
+      this.selectedColumns = [...new Set([...this.selectedColumns, ...columns])];
+    },
     setData({columns=[], data=[], query='', error_message=''} ){
       this.columns = [...columns]
       this.data_list = [...data]
