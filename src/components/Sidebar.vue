@@ -57,7 +57,7 @@
           </div> -->
         </div>
       </div>
-      <div class="accordion-item mb-2">
+      <!-- <div class="accordion-item mb-2">
         <h2 class="accordion-header" id="flush-headingTwo">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
             <i class="fa-solid fa-folder-tree me-2"></i>Views
@@ -104,7 +104,7 @@
             </button>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <div class="d-flex align-items-center" style="position: absolute; bottom: 10px; z-index: 10;">

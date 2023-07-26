@@ -8,7 +8,7 @@
         <button @click.prevent="saveReport()" type="button" class="btn btn-outline-primary btn-sm shadow-none me-2">
           <i class="fa-solid fa-floppy-disk me-2"></i>Save
         </button>
-        <div class="dropdown">
+        <!-- <div class="dropdown">
           <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="fa-solid fa-download me-2"></i>Export
           </button>
@@ -23,7 +23,7 @@
               <i class="fa-solid fa-file-csv me-2"></i>CSV
             </button>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="mt-0">
