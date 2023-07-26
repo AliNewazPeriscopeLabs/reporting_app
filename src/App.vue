@@ -19,7 +19,13 @@
       :filters="filters"
       :addFilter="addFilter"
       :removeFilter="removeFilter"
-      :setFilters="setFilters"
+      :setEmpty="setEmpty"
+      :group_by="group_by"
+      :addGroupBy="addGroupBy"
+      :removeGroupBy="removeGroupBy"
+      :sort_by="sort_by"
+      :addSortBy="addSortBy"
+      :removeSortBy="removeSortBy"
     ></router-view>
   </div>
 </template>
@@ -59,9 +65,23 @@ export default {
       savedTableColumns: {},
       savedJoins: [],
       filters: [],
+      sort_by: [],
+      group_by: []
     }
   },
   methods:{
+    addSortBy() {
+      this.sort_by.push({ column: {}, value: 'order by', order: 'asc'  });
+    },
+    removeSortBy(index) {
+      this.sort_by.splice(index, 1);
+    },
+    addGroupBy() {
+      this.group_by.push({ column: {}, value: 'group by'  });
+    },
+    removeGroupBy(index) {
+      this.group_by.splice(index, 1);
+    },
     addFilter() {
       if (this.filters.length === 0) {
         this.filters.push({ flag: false, column: '', operator_type: null, filter_value: {}  });
@@ -75,8 +95,10 @@ export default {
     setSavedJoins(join){
       this.savedJoins= join
     },
-    setFilters(filters=[]){
-      this.filters = filters
+    setEmpty(){
+      this.filters = [];
+      this.group_by = [];
+      this.sort_by = [];
     },
     setSelectedColumns(columns){
       this.selectedColumns = [...new Set([...this.selectedColumns, ...columns])];
