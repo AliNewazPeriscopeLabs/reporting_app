@@ -13,15 +13,15 @@
             <i class="fa-solid fa-download me-2"></i>Export
           </button>
           <div class="dropdown-menu">
-            <!-- <button class="dropdown-item fw-light" type="button">
+            <button v-if="columns.length < 12" @click.prevent="exportPdf" class="dropdown-item fw-light" type="button">
               <i class="fa-solid fa-file-pdf me-2"></i>PDF
-            </button> -->
+            </button>
             <button @click.prevent="exportXls" class="dropdown-item fw-light" type="button">
               <i class="fa-solid fa-file-excel me-2"></i>EXCEL
             </button>
-            <!-- <button class="dropdown-item fw-light" type="button">
+            <button @click.prevent="exportCsv" class="dropdown-item fw-light" type="button">
               <i class="fa-solid fa-file-csv me-2"></i>CSV
-            </button> -->
+            </button>
           </div>
         </div>
       </div>
@@ -177,7 +177,7 @@ export default {
           'rep_name': this.report_name, 
           'rep_desc': this.report_desc
         }
-        const {data:{data}} = await axios.post('/get-excel',{
+        const {data: { data }} = await axios.post('/get-excel', {
           datalist: this.data_list,
           columns: this.columns,
           details: details
@@ -193,21 +193,42 @@ export default {
       }
     },
     async exportPdf(){
-      const {data:{data}} = await axios.post('/get-pdf',{
+      this.validationNameAndDesc();
+      if (this.requiredCheck === false) {
+        this.spin = true;
+        let details = {
+          'rep_name': this.report_name, 
+          'rep_desc': this.report_desc,
+          'orientation': 'landscape'
+        }
+      const {data: { data }} = await axios.post('/get-pdf', {
           datalist: this.data_list,
-          columns: this.columns
+          columns: this.columns,
+          details: details
         })
         let a = document.createElement('A');
         a.href = process.env.VUE_APP_BACKEND_HOST+data;
         a.download = data.substr(data.lastIndexOf('/') + 1);
+        a.target ="_blank";
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
+        this.spin = false;
+        this.deleteFile(data);
+      }
     },
     async exportCsv(){
-      const {data:{data}} = await axios.post('/get-csv',{
+      this.validationNameAndDesc();
+      if (this.requiredCheck === false) {
+        this.spin = true;
+        let details = {
+          'rep_name': this.report_name, 
+          'rep_desc': this.report_desc
+        }
+        const {data: { data }} = await axios.post('/get-csv', {
           datalist: this.data_list,
-          columns: this.columns
+          columns: this.columns,
+          details: details
         })
         let a = document.createElement('A');
         a.href = process.env.VUE_APP_BACKEND_HOST+data;
@@ -215,6 +236,9 @@ export default {
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
+        this.spin = false;
+        this.deleteFile(data);
+      }
     },
     deleteFile(path=""){
       setTimeout(() => axios.post('/remove-file',{
