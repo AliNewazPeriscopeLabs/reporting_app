@@ -8,22 +8,22 @@
         <button @click.prevent="saveReport()" type="button" class="btn btn-outline-primary btn-sm shadow-none me-2">
           <i class="fa-solid fa-floppy-disk me-2"></i>Save
         </button>
-        <!-- <div class="dropdown">
+        <div class="dropdown">
           <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="fa-solid fa-download me-2"></i>Export
           </button>
           <div class="dropdown-menu">
-            <button class="dropdown-item fw-light" type="button">
+            <!-- <button class="dropdown-item fw-light" type="button">
               <i class="fa-solid fa-file-pdf me-2"></i>PDF
-            </button>
-            <button class="dropdown-item fw-light" type="button">
+            </button> -->
+            <button @click.prevent="exportXls" class="dropdown-item fw-light" type="button">
               <i class="fa-solid fa-file-excel me-2"></i>EXCEL
             </button>
-            <button class="dropdown-item fw-light" type="button">
+            <!-- <button class="dropdown-item fw-light" type="button">
               <i class="fa-solid fa-file-csv me-2"></i>CSV
-            </button>
+            </button> -->
           </div>
-        </div> -->
+        </div>
       </div>
     </div>
     <div class="mt-0">
@@ -153,13 +153,34 @@ export default {
     }
   },
   watch: {
-    
+    report_name: function(x){
+      if(x === '') {
+        this.errorList['report_name'] = 'Report Name is required'
+      } else {
+        this.errorList['report_name'] = null
+      }
+    },
+    report_desc: function(x){
+      if(x === '') {
+        this.errorList['report_desc'] = 'Report Description is required'
+      } else {
+        this.errorList['report_desc'] = null
+      }
+    },
   },
   methods: {
     async exportXls(){
-      const {data:{data}} = await axios.post('/get-excel',{
+      this.validationNameAndDesc();
+      if (this.requiredCheck === false) {
+        this.spin = true;
+        let details = {
+          'rep_name': this.report_name, 
+          'rep_desc': this.report_desc
+        }
+        const {data:{data}} = await axios.post('/get-excel',{
           datalist: this.data_list,
-          columns: this.columns
+          columns: this.columns,
+          details: details
         })
         let a = document.createElement('A');
         a.href = process.env.VUE_APP_BACKEND_HOST+data;
@@ -167,6 +188,9 @@ export default {
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
+        this.spin = false;
+        this.deleteFile(data);
+      }
     },
     async exportPdf(){
       const {data:{data}} = await axios.post('/get-pdf',{
@@ -191,6 +215,11 @@ export default {
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
+    },
+    deleteFile(path=""){
+      setTimeout(() => axios.post('/remove-file',{
+        file_path: path
+      }), 5000);
     },
     async saveReport() {
       this.spin = true;
