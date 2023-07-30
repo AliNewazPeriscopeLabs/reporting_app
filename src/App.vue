@@ -1,6 +1,7 @@
 <template>
   <div id="body">
     <router-view
+      :data_loaded="spin"
       :getConnectionList="getConnectionList"
       :connections="connections"
       :columns="columns"
@@ -27,6 +28,10 @@
       :addSortBy="addSortBy"
       :removeSortBy="removeSortBy"
       :saveReportData="saveReportData"
+      :setFilters="setFilters"
+      :setGroupBy="setGroupBy"
+      :setSortBy="setSortBy"
+      :setSpin="setSpin"
     ></router-view>
   </div>
 </template>
@@ -53,6 +58,7 @@ export default {
   name: 'App',
   data() {
     return {
+      spin: false,
       found: false,
       agreement_id: null,
       primary_property_id: null,
@@ -71,6 +77,9 @@ export default {
     }
   },
   methods:{
+    setSpin(flag){
+      this.spin = flag;
+    },
     addSortBy() {
       this.sort_by.push({ column: {}, value: 'order by', order: 'asc'  });
     },
@@ -118,8 +127,17 @@ export default {
       this.query = query
       this.query_error = error_message
     },
+    setFilters(filters=[]){
+      this.filters = [...filters];
+    },
     setMappedTable(table=[]){
       this.mappedTable = [...table]
+    },
+    setGroupBy(table=[]){
+      this.group_by = [...table]
+    },
+    setSortBy(table=[]){
+      this.sort_by = [...table]
     },
     setSavedColumns(columns={}){
       this.savedTableColumns = {...columns}

@@ -90,8 +90,8 @@
       </table>
     </div>
   </div>
-  <spinner v-if="spin"></spinner>
-  <spinner v-if="query_error === '' && data_list.length === 0"></spinner>
+  <spinner v-if="spin || data_loaded"></spinner>
+  <!-- <spinner v-if=""></spinner> -->
 </template>
   
 <script>
@@ -108,6 +108,7 @@ export default {
     'savedJoins',
     'filters',
     'group_by',
+    'data_loaded',
     'sort_by',
     'mappedTable'
   ],
@@ -128,6 +129,9 @@ export default {
     this.con_id = this.id ? this.id : null;
   },
   mounted() {
+    if (this.data_list.length === 0) {
+      this.spin = false;
+    }
   },
   computed: {
     id(){

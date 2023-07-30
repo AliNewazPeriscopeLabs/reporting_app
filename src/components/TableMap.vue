@@ -2,6 +2,8 @@
   <div class="dndflow" @drop="onDrop">
     <Sidebar 
       :tables_list="tables_list"
+      :views_list="views_list"
+      :models_list="models_list"
       :getColumns="getColumns" 
       :columns="columns"
       :setMappedTable="setMappedTable"
@@ -128,6 +130,8 @@ export default {
   data() {
     return {
       tables_list:[],
+      views_list:[],
+      models_list:[],
       orphan_tables:[],
       spin: false,
       columns:{},
@@ -157,6 +161,7 @@ export default {
     'savedJoins',
     'setSavedJoins',
     'filters',
+    'setFilters',
     'addGroupBy',
     'removeGroupBy',
     'addFilter',
@@ -165,10 +170,17 @@ export default {
     'group_by',
     'sort_by',
     'addSortBy',
+    'setSpin',
     'removeSortBy',
+    'setGroupBy',
+    'setSortBy',
     'setMappedTable'
   ],
-  created() {
+  async created() {
+    this.spin=true;
+    await Promise.all([this.getTablesList(), this.getViewsList(), this.getModelsList()])
+    this.spin=false;
+    
     this.getTablesList()
     
     this.onConnect((params) =>{
@@ -241,7 +253,26 @@ export default {
     async onDrop(event) {
       const type = event.dataTransfer?.getData('application/vueflow')
       const tableName = event.dataTransfer?.getData('application/table')
-      
+      const model_id = event.dataTransfer?.getData('application/model')
+      if (model_id) {
+        const model = this.models_list.find(e=>e.id == model_id);
+        // console.log(model.data_model);
+        this.tables = JSON.parse(model.data_model).tables;
+        const joins = JSON.parse(model.data_model).joins;
+        // this.joins
+        let col= [];
+        for (const join of joins) {
+          this.columns[join.from_table] === undefined ? col.push(this.getColumns(join.from_table)) : '';
+          this.columns[join.to_table] === undefined ? col.push(this.getColumns(join.to_table)) : '';
+        }
+        await Promise.all(col);
+        this.joins = [...joins];
+        this.setGroupBy(JSON.parse(model.data_model).group_by);
+        this.setSortBy(JSON.parse(model.data_model).sort_by);
+        this.setFilters(JSON.parse(model.data_model).filters);
+        // console.log(model);
+        return
+      }
       const { left, top } = this.vueFlowRef.getBoundingClientRect()
 
       const position = this.project({
@@ -299,11 +330,16 @@ export default {
       return default_db
     },
     async getTablesList(){
-      this.spin=true;
       const { data:{ data } } = await axios.get('/get-tables?connection_id='+this.id);
       this.tables_list = data;
-      this.spin=false;
-      
+    },
+    async getViewsList(){
+      const { data:{ data } } = await axios.get('/get-views?connection_id='+this.id);
+      this.views_list = data;
+    },
+    async getModelsList(){
+      const { data:{ data } } = await axios.get('/get-reports?connection_id='+this.id);
+      this.models_list = data;
     },
     async getColumns(table){
       this.spin=true;
@@ -313,6 +349,7 @@ export default {
       this.spin=false;
     },
     async runReportData(){
+      this.setSpin(true);
       this.setSavedJoins(this.joins);
       this.setMappedTable(this.tables);
       this.setSavedColumns(this.columns);
@@ -332,6 +369,7 @@ export default {
       } else {
         this.setData({query, error_message});
       }
+      this.setSpin(false);
     }
   },
 }
