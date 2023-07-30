@@ -9,12 +9,12 @@ import { Handle, Position } from '@vue-flow/core'
     class="card p-2"
   >
     <h6>{{data.table_name}}</h6>
-    <div class="form-check">
+    <!-- <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
         <label class="form-check-label" for="flexCheckDefault">
             All
         </label>
-    </div>
+    </div> -->
     <template v-if="columns[data.table_name]?.length">
       <div v-for="(col, i) in columns[data.table_name]" :key="i" class="form-check">
           <input v-model="selectedColumns" class="form-check-input" type="checkbox" :value="`${data.table_name}.${col.column_name}`" :id="`${data.table_name}_${col.column_name}_${i}`">

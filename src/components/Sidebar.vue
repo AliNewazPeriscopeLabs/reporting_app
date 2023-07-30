@@ -25,17 +25,6 @@
                 </button>
               </template>
             </div>
-            <!-- <div class="collapse ms-5 pe-2" :id="`collapseExample${i}`">
-              <button class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2" type="button">
-                <i class="fa-solid fa-diamond me-2"></i>Column One
-              </button>
-              <button class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2" type="button">
-                <i class="fa-solid fa-diamond me-2"></i>Column Two
-              </button>
-              <button class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2" type="button">
-                <i class="fa-solid fa-diamond me-2"></i>Column Three
-              </button>
-            </div> -->
           </template>
           <!-- <div>
             <div class="nodes p-2 ms-4">
@@ -57,9 +46,55 @@
           </div> -->
         </div>
       </div>
+      <div v-if="views_list.length>0" class="accordion-item mb-2">
+        <h2 class="accordion-header" id="flush-headingOne">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+            <i class="fa-solid fa-folder-tree me-2"></i>Views
+          </button>
+        </h2>
+        <div id="flush-collapseTwo" class="accordion-collapse collapse py-2" aria-labelledby="flush-headingTwo" data-bs-parent="#accordionFlushExample">
+          <template v-for="(tab, i) in views_list" :key="i">
+            <div  class="nodes p-2 ms-4">
+              <button @click="!columns[tab.tablename] ? getColumns(tab.tablename) : ''" class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event,'custom', tab.tablename)" type="button" data-bs-toggle="collapse" :data-bs-target="`#collapseExample${i}`" aria-expanded="false" :aria-controls="`collapseExample${i}`">
+                <i class="fa-solid fa-table me-2"></i>{{tab.tablename}}
+              </button>
+            </div>
+            <div class="collapse ms-5 pe-2" :id="`collapseExample${i}`">
+              <template v-if="columns[tab.tablename]?.length">
+                <button v-for="(item, i) in columns[tab.tablename]" :key="i" class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2" type="button">
+                  <i class="fa-solid fa-diamond me-2"></i>{{item.column_name}}
+                </button>
+              </template>
+            </div>
+          </template>
+        </div>
+      </div>
+      <!-- <div class="accordion-item mb-2">
+        <h2 class="accordion-header" id="flush-headingThree">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+            <i class="fa-solid fa-folder-tree me-2"></i>Models
+          </button>
+        </h2>
+        <div id="flush-collapseThree" class="accordion-collapse collapse py-2" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
+          <template v-for="(tab, i) in models_list" :key="i">
+            <div  class="nodes p-2 ms-4">
+              <button @click="!columns[tab.tablename] ? getColumns(tab.tablename) : ''" class="vue-flow__node-input btn-style btn btn-outline-light text-dark shadow-none d-flex justify-content-between align-items-center" :draggable="true" @dragstart="onDragStart($event,'custom', tab.tablename)" type="button" data-bs-toggle="collapse" :data-bs-target="`#collapseExample${i}`" aria-expanded="false" :aria-controls="`collapseExample${i}`">
+                <i class="fa-solid fa-table me-2"></i>{{tab.tablename}}
+              </button>
+            </div>
+            <div class="collapse ms-5 pe-2" :id="`collapseExample${i}`">
+              <template v-if="columns[tab.tablename]?.length">
+                <button v-for="(item, i) in columns[tab.tablename]" :key="i" class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2" type="button">
+                  <i class="fa-solid fa-diamond me-2"></i>{{item.column_name}}
+                </button>
+              </template>
+            </div>
+          </template>
+        </div>
+      </div> -->
       <!-- <div class="accordion-item mb-2">
         <h2 class="accordion-header" id="flush-headingTwo">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseTwo">
             <i class="fa-solid fa-folder-tree me-2"></i>Views
           </button>
         </h2>
@@ -81,8 +116,8 @@
             </button>
           </div>
         </div>
-      </div>
-      <div class="accordion-item">
+      </div>-->
+      <div v-if="models_list.length>0" class="accordion-item">
         <h2 class="accordion-header" id="flush-headingThree">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
             <i class="fa-solid fa-network-wired me-2"></i>Data Models
@@ -90,10 +125,10 @@
         </h2>
         <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
           <div class="d-flex flex-column justify-content-center align-items-center p-4">
-            <button type="button" class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2">
-              <i class="fa-brands fa-hive me-2"></i>Data Model 1
+            <button v-for="(tab, i) in models_list" :key="i" :draggable="true" @dragstart="onDragStart($event,'model', tab.id)" type="button" class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2">
+              <i class="fa-brands fa-hive me-2"></i>{{tab.name}}
             </button>
-            <button type="button" class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2">
+            <!-- <button type="button" class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2">
               <i class="fa-brands fa-hive me-2"></i>Data Model 2
             </button>
             <button type="button" class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2">
@@ -101,10 +136,10 @@
             </button>
             <button type="button" class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2">
               <i class="fa-brands fa-hive me-2"></i>Data Model 4
-            </button>
+            </button> -->
           </div>
         </div>
-      </div> -->
+      </div> 
     </div>
 
     <div class="d-flex align-items-center" style="position: absolute; bottom: 10px; z-index: 10;">
@@ -120,10 +155,15 @@
 <script>
 export default {
   setup(){
-    function onDragStart(event, nodeType, tableName) {
+    function onDragStart(event, nodeType, value) {
       if (event.dataTransfer) {
+        if (nodeType === 'model') {
+          console.log(value);
+          event.dataTransfer.setData('application/model', value)
+          return
+        }
         event.dataTransfer.setData('application/vueflow', nodeType)
-        event.dataTransfer.setData('application/table', tableName)
+        event.dataTransfer.setData('application/table', value)
         event.dataTransfer.effectAllowed = 'move'
       }
     }
@@ -133,6 +173,8 @@ export default {
   },
   props:[
     'tables_list',
+    'views_list',
+    'models_list',
     'columns',
     'getColumns',
     'savedColumns',
