@@ -241,8 +241,10 @@ export default {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     },
     createJoin(x){
+      console.log(x);
       const joinData = JSON.parse(JSON.stringify(x))
       joinData.join_id = this.tables[this.tables.length-1].join_id;
+      this.tables[this.tables.length-1].label = joinData.join_type;
       this.joins.push(joinData);
       this.joinModal = false;
     },
