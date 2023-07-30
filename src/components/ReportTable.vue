@@ -108,7 +108,8 @@ export default {
     'savedJoins',
     'filters',
     'group_by',
-    'sort_by'
+    'sort_by',
+    'mappedTable'
   ],
   components:{
     spinner
@@ -208,12 +209,14 @@ export default {
     getDataModels() {
       let data_model = []
       if (
+        this.mappedTable.length > 0 || 
         this.filters.length > 0 || 
         this.savedJoins.length > 0 || 
         this.group_by.length > 0 || 
         this.sort_by.length > 0
       ) {
         const models = {
+          'tables': [...this.mappedTable],
           'filters': [...this.filters], 
           'joins': [...this.savedJoins], 
           'group_by': [...this.group_by], 
