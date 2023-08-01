@@ -27,9 +27,11 @@
         </template>
         <Panel :position="PanelPosition.TopRight" class="controls">
           <div class="d-flex justify-content-center align-items-center">
-            <router-link v-show="tables.length > 0" @click="runReportData" :to="{ name: 'preview', query:{ id: id } }" class="btn btn-outline-primary btn-sm me-2">
+            <button v-show="tables.length > 0" 
+              @click="runReportData" 
+              class="btn btn-outline-primary btn-sm me-2">
               Preview
-            </router-link>
+            </button> 
             <button style="background-color: #113285; color: white" title="Reset Transform" @click="resetTransform(), setEmpty(), joins=[]">
                 <svg width="16" height="16" viewBox="0 0 32 32">
                     <path fill="#FFFFFB" d="M18 28A12 12 0 1 0 6 16v6.2l-3.6-3.6L1 20l6 6l6-6l-1.4-1.4L8 22.2V16a10 10 0 1 1 10 10Z" />
@@ -77,6 +79,7 @@ import JoinModal from './modal/JoinModal.vue'
 import spinner from './loader/spinner.vue'
 import axios from 'axios'
 import { ref } from 'vue'
+import toastr from '@/utils/toaster'
 export default {
   setup() {
     let tables = ref([]);
@@ -351,6 +354,7 @@ export default {
       this.spin=false;
     },
     async runReportData(){
+      if(!this.validateArray(this.sort_by, 'column') || !this.validateArray(this.group_by, 'column') || !this.validateArray(this.filters, 'column')) {return toastr.error('Query Clauses cannot be left empty!');}
       this.setSpin(true);
       this.setSavedJoins(this.joins);
       this.setMappedTable(this.tables);
@@ -372,6 +376,19 @@ export default {
         this.setData({query, error_message});
       }
       this.setSpin(false);
+      this.$router.push({ name: 'preview', query: { id: this.id } });
+    },
+    
+    isColumnEmpty(obj, column_name) {
+     return column_name in obj && Object.keys(obj[column_name]).length === 0;
+    },
+    validateArray(array, column_name) {
+      for (const obj of array) {
+        if (this.isColumnEmpty(obj, column_name)) {
+          return false;
+        }
+      }
+      return true;
     }
   },
 }

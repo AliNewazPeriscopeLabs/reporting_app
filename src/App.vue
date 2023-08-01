@@ -94,9 +94,9 @@ export default {
     },
     addFilter() {
       if (this.filters.length === 0) {
-        this.filters.push({ flag: false, column: '', operator_type: null, filter_value: {}  });
+        this.filters.push({ flag: false, column: {}, operator_type: null, filter_value: {}  });
       } else {
-        this.filters.push({ flag: true, and_or:'and', column: '', operator_type: null, filter_value: {} });
+        this.filters.push({ flag: true, and_or:'and', column: {}, operator_type: null, filter_value: {} });
       }
     },
     removeFilter(index) {
