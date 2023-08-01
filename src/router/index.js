@@ -1,4 +1,4 @@
-import { createWebHistory, createRouter } from "vue-router";
+import { createWebHashHistory, createRouter } from "vue-router";
 import index from '@/components/index';
 import ConnectionList from '@/components/ConnectionList';
 import OptionsPen from '@/components/OptionsPen';
@@ -16,7 +16,7 @@ const routes = [
 ];
 
 export default createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   hashbang: false,
   base: baseUrl,
   routes

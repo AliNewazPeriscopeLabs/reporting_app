@@ -101,6 +101,7 @@ import toastr from '@/utils/toaster';
 export default {
   props:[
     'columns',
+    'selectedColumns',
     'query',
     'query_error',
     'data_list',
@@ -276,6 +277,7 @@ export default {
           'tables': [...this.mappedTable],
           'filters': [...this.filters], 
           'joins': [...this.savedJoins], 
+          'columns': [...this.selectedColumns], 
           'group_by': [...this.group_by], 
           'sort_by': [...this.sort_by]
         }

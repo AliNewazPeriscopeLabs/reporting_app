@@ -30,7 +30,7 @@
             <router-link v-show="tables.length > 0" @click="runReportData" :to="{ name: 'preview', query:{ id: id } }" class="btn btn-outline-primary btn-sm me-2">
               Preview
             </router-link>
-            <button style="background-color: #113285; color: white" title="Reset Transform" @click="resetTransform(), setEmpty(), joins=[]">
+            <button style="background-color: #113285; color: white" title="Reset Transform" @click="resetTransform(), setEmpty(), joins=[], columns={}">
                 <svg width="16" height="16" viewBox="0 0 32 32">
                     <path fill="#FFFFFB" d="M18 28A12 12 0 1 0 6 16v6.2l-3.6-3.6L1 20l6 6l6-6l-1.4-1.4L8 22.2V16a10 10 0 1 1 10 10Z" />
                 </svg>
@@ -40,6 +40,8 @@
         <Background/>  
       </VueFlow>
       <OptionsPen 
+        :updateJoinType="updateJoinType"
+        :tables="tables"
         :filters="filters"
         :joins="joins"
         :group_by="group_by"
@@ -51,6 +53,7 @@
         :removeGroupBy="removeGroupBy"
         :addSortBy="addSortBy"
         :removeSortBy="removeSortBy"
+        :setLimit="setLimit"
         :columns="columns"
       />
     </div>
@@ -174,6 +177,8 @@ export default {
     'removeSortBy',
     'setGroupBy',
     'setSortBy',
+    'setLimit',
+    'limit',
     'setMappedTable'
   ],
   async created() {
@@ -187,7 +192,7 @@ export default {
       const joinId = this.getRandomInt(1000, 2999);
       this.joinModal = true;
       
-      const s_table_parts = params.source.split('_')
+      const s_table_parts = params.source.split('_');
       s_table_parts.pop();
       this.s_table = s_table_parts.join('_');
       const t_table_parts = params.target.split('_')
@@ -201,7 +206,7 @@ export default {
         style: { stroke: 'orange' },
         labelBgStyle: { fill: 'orange' },
         join_id: joinId,
-        type: 'custom',
+        type: 'step',
       })
     })
   },
@@ -259,7 +264,6 @@ export default {
       if (model_id) {
         const model = this.models_list.find(e=>e.id == model_id);
         // console.log(model.data_model);
-        this.tables = JSON.parse(model.data_model).tables;
         const joins = JSON.parse(model.data_model).joins;
         // this.joins
         let col= [];
@@ -269,10 +273,11 @@ export default {
         }
         await Promise.all(col);
         this.joins = [...joins];
+        JSON.parse(model.data_model).columns ? this.setSelectedColumns(JSON.parse(model.data_model).columns) : '';
         this.setGroupBy(JSON.parse(model.data_model).group_by);
         this.setSortBy(JSON.parse(model.data_model).sort_by);
         this.setFilters(JSON.parse(model.data_model).filters);
-        // console.log(model);
+        this.tables = JSON.parse(model.data_model).tables;
         return
       }
       const { left, top } = this.vueFlowRef.getBoundingClientRect()
@@ -324,6 +329,10 @@ export default {
       this.tables[this.tables.length-1].label = type
       this.joinModal = false;
     },
+    updateJoinType(id, type){
+      const join = this.tables.find(e=>e.join_id==id);
+      join.label = type;
+    },
     // addJoinId(id){
     //   this.joins[this.joins.length-1].join_id = id;
     // },
@@ -363,6 +372,7 @@ export default {
         table: this.joins.length >0 ? [] : this.orphan_tables,
         selecedCols: this.selectedColumns,
         filters: this.filters,
+        limit: this.limit,
         connection
       });
       const columns = data.length>0 ? Object.keys(data[0]) : ['No Data Found'];

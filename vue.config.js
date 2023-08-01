@@ -1,5 +1,5 @@
 module.exports = {
-  publicPath: process.env.VUE_APP_PUBLIC_PATH + '/',
+  publicPath: process.env.VUE_APP_PUBLIC_PATH +'/',
   // Updates the JS filenames.
   configureWebpack: (config) => {
     config.output.filename = 'js/[name].insights.min.js'

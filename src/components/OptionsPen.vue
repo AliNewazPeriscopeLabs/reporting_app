@@ -7,6 +7,7 @@
                 <button v-if="joins.length > 0" class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Joins</button>
                 <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Group By</button>
                 <button class="nav-link" id="nav-sort-tab" data-bs-toggle="tab" data-bs-target="#nav-sort" type="button" role="tab" aria-controls="nav-sort" aria-selected="false">Sort By</button>
+                <button class="nav-link" id="nav-limit-tab" data-bs-toggle="tab" data-bs-target="#nav-limit" type="button" role="tab" aria-controls="nav-limit" aria-selected="false">Limit</button>
             </div>
         </nav>
         <div class="tab-content p-2 border bg-light" id="nav-tabContent" style="max-height: 200px; overflow-y: scroll; overflow-x: hidden;">
@@ -34,9 +35,11 @@
                                         <div class="form-group">
                                             <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" v-model="filter.column" required="required">
                                                 <option value="" disabled selected>Please Choose</option>
-                                                <option v-for="(col, index) in columnList()" :key="index" :value="col">
-                                                    {{ col.column_name ? `${col.table_name} &gt; ${col.column_name}` : '' }}
-                                                </option>
+                                                <template v-if="tables.length">
+                                                    <option  v-for="(col, index) in columnList()" :key="index" :value="col">
+                                                        {{ col.column_name ? `${col.table_name} &gt; ${col.column_name}` : '' }}
+                                                    </option>                                
+                                                </template>
                                             </select>
                                         </div>
                                     </td>
@@ -97,7 +100,7 @@
                                 <td data-bind="with: Field"></td>
                                 <td data-bind="with: Field">
                                     <div class="form-group">
-                                        <select class="form-control" style="width: 100%;"  required="required" v-model="join.join_type">
+                                        <select @change="updateJoinType(join.join_id, join.join_type)" class="form-control" style="width: 100%;"  required="required" v-model="join.join_type">
                                             <option :value="join.join_type">
                                                 {{ join.join_type }}
                                             </option>
@@ -142,11 +145,13 @@
                             <tr v-for="(gb, i) in group_by" :key="i" class="rule-container">
                                 <td>
                                     <div class="form-group">
-                                        <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" required="required" v-model="gb.column">
+                                        <select class="form-control" style="width: 100%;"  required="required" v-model="gb.column">
                                             <option :value="{}" disabled>Please Choose</option>
-                                            <option v-for="(col, index) in columnList()" :key="index" :value="col">
-                                                {{ col.column_name ? `${col.table_name} &gt; ${col.column_name}` : '' }}
-                                            </option>
+                                            <template v-if="tables.length">
+                                                <option v-for="(col, index) in columnList()" :key="index" :value="col">
+                                                    {{ col.column_name ? `${col.table_name} &gt; ${col.column_name}` : '' }}
+                                                </option>
+                                            </template>
                                         </select>
                                     </div>
                                 </td>
@@ -176,11 +181,13 @@
                             <tr v-for="(sb, i) in sort_by" :key="i" class="rule-container">
                                 <td>
                                     <div class="form-group">
-                                        <select class="form-control" style="width: 100%;" data-bind="options: $root.selectedFieldsCanFilter, optionsText: 'selectedFieldName', optionsCaption: 'Please Choose', value: Field, attr: {required: Field()==null?'required':false}, disable: Field() &amp;&amp; Field().forced" required="required" v-model="sb.column">
+                                        <select class="form-control" style="width: 100%;" required="required" v-model="sb.column">
                                             <option :value="{}" disabled>Please Choose</option>
-                                            <option v-for="(col, index) in columnList()" :key="index" :value="col">
-                                                {{ col.column_name ? `${col.table_name} &gt; ${col.column_name}` : '' }}
-                                            </option>
+                                            <template v-if="tables.length">
+                                                <option v-for="(col, index) in columnList()" :key="index" :value="col">
+                                                    {{ col.column_name ? `${col.table_name} &gt; ${col.column_name}` : '' }}
+                                                </option>
+                                            </template>
                                         </select>
                                     </div>
                                 </td>
@@ -202,6 +209,26 @@
                     <button @click="addSortBy" class="btn btn-primary">Add Sort By</button>
                 </div>
             </div>
+            <div class="tab-pane fade" id="nav-limit" role="tabpanel" aria-labelledby="nav-limit-tab">
+                <div class="query-builder">
+                    <table class="table table-hover table-borderless">
+                        <thead>
+                            <tr>
+                                <th style="width: 40%">Limit</th>
+                                <!-- <th style="width: 12%">Order</th> -->
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="rule-container">
+                                <td>
+                                    <input min="10" @change="setLimit(limit)"  :class="['form-control']" type="number" style="width: 100%;"  v-model="limit" required="required" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -209,6 +236,7 @@
 export default {
     props:[
         'filters',
+        'tables',
         'joins',
         'group_by',
         'sort_by',
@@ -219,10 +247,13 @@ export default {
         'removeGroupBy',
         'addSortBy',
         'removeSortBy',
+        'updateJoinType',
         'columns',
+        'setLimit',
     ],
   data() {
     return {
+      limit: 200,
       numbers_type_operator: [
         {name: '=', value: '='},
         {name: '>', value: '>'},

@@ -15,7 +15,8 @@ import { Handle, Position } from '@vue-flow/core'
             All
         </label>
     </div> -->
-    <template v-if="columns[data.table_name]?.length">
+    <span v-if="!expand" @click="expand=true" style="color: #0000ff7a; text-decoration: underline;">view columns</span>
+    <template v-if="columns[data.table_name]?.length && expand">
       <div v-for="(col, i) in columns[data.table_name]" :key="i" class="form-check">
           <input v-model="selectedColumns" class="form-check-input" type="checkbox" :value="`${data.table_name}.${col.column_name}`" :id="`${data.table_name}_${col.column_name}_${i}`">
           <label class="form-check-label" :for="`${data.table_name}_${col.column_name}_${i}`">
@@ -23,6 +24,7 @@ import { Handle, Position } from '@vue-flow/core'
           </label>
       </div>      
     </template>
+    <span v-if="expand" @click="expand=false" style="color: #0000ff7a; text-decoration: underline;">hide columns</span>
     <!-- <div class="form-check">
         <input class="form-check-input" type="checkbox" value="" id="columnTwo" checked>
         <label class="form-check-label" for="columnTwo">
@@ -44,13 +46,15 @@ export default {
   ],
   data() {
     return {
-      selectedColumns:[]
+      selectedColumns:[],
+      expand: false
     }
   },
   mounted() {
     if (this.preSelectedColumns.length>0) {
       this.selectedColumns = this.preSelectedColumns.filter(e=>{
         const table = e.split('.').shift();
+        console.log(table, this.data.table_name, 'got table');
         return table === this.data.table_name
       })
     }

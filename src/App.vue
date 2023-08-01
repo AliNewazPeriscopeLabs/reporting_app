@@ -32,6 +32,8 @@
       :setGroupBy="setGroupBy"
       :setSortBy="setSortBy"
       :setSpin="setSpin"
+      :setLimit="setLimit"
+      :limit="limit"
     ></router-view>
   </div>
 </template>
@@ -68,6 +70,7 @@ export default {
       selectedColumns: [],
       query_error: '',
       query:'',
+      limit:200,
       mappedTable: [],
       savedTableColumns: {},
       savedJoins: [],
@@ -79,6 +82,9 @@ export default {
   methods:{
     setSpin(flag){
       this.spin = flag;
+    },
+    setLimit(l){
+      this.limit = l;
     },
     addSortBy() {
       this.sort_by.push({ column: {}, value: 'order by', order: 'asc'  });
@@ -111,6 +117,7 @@ export default {
       this.group_by = [];
       this.sort_by = [];
       this.selectedColumns = [];
+      this.savedTableColumns = {};
     },
     setSelectedColumns(columns){
       const table = columns[0].split('.').shift()
