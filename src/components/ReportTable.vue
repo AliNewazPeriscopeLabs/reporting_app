@@ -29,10 +29,10 @@
     <div class="mt-0">
       <div v-if="report_has_info" class="mt-3">
         <h5 class="fw-normal mb-3">
-          <i class="fa-solid fa-file-invoice me-2"></i>Sales Report
+          <i class="fa-solid fa-file-invoice me-2"></i>{{ reportModelInfo.report_name }}
         </h5>
         <p class=" fw-normal text-muted">
-          <i class="fa-solid fa-clipboard me-2"></i>This report describe about monthly sales report.
+          <i class="fa-solid fa-clipboard me-2"></i>{{ reportModelInfo.report_desc }}
         </p>
       </div>
       <div v-else>
@@ -82,16 +82,12 @@
         <tbody>
           <tr v-for="(data, i) in data_list" :key="i">
             <td v-for="(col, j) in columns" :key="j" scope="row">{{ data[col] }}</td>
-            <!-- <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td> -->
           </tr>
         </tbody>
       </table>
     </div>
   </div>
   <spinner v-if="spin || data_loaded"></spinner>
-  <!-- <spinner v-if=""></spinner> -->
 </template>
   
 <script>
@@ -111,14 +107,15 @@ export default {
     'group_by',
     'data_loaded',
     'sort_by',
-    'mappedTable'
+    'mappedTable',
+    'reportModelInfo',
+    'setReportInfo'
   ],
   components:{
     spinner
   },
   data() {
     return {
-      report_has_info: false,
       spin: false,
       con_id: null,
       report_name: '',
@@ -132,6 +129,11 @@ export default {
   mounted() {
     if (this.data_list.length === 0) {
       this.spin = false;
+    }
+    
+    if (this.report_has_info) {
+      this.report_name = this.reportModelInfo.report_name;
+      this.report_desc = this.reportModelInfo.report_desc;
     }
   },
   computed: {
@@ -155,6 +157,9 @@ export default {
         return true;
       }
       return false;
+    },
+    report_has_info(){
+      return this.reportModelInfo && Object.keys(this.reportModelInfo).length > 0 ?  true : false;
     }
   },
   watch: {
@@ -252,11 +257,13 @@ export default {
     },
     async saveReport() {
       this.spin = true;
+      const m_id = this.reportModelInfo.report_id ? this.reportModelInfo.report_id : null
       const data_model = this.getDataModels()
       this.validationNameAndDesc();
       if (this.requiredCheck === false) {
-        const {success, message} = await this.saveReportData(this.con_id, this.report_name, this.report_desc, this.query, data_model)
+        const {mId, success, message} = await this.saveReportData(this.con_id, this.report_name, this.report_desc, this.query, data_model, m_id)
         if (success) {
+          this.setReportInfo({report_id: mId , report_name: this.report_name, report_desc: this.report_desc});
           toastr.success(message);
         } else {
           toastr.error(message);

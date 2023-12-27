@@ -124,10 +124,17 @@
           </button>
         </h2>
         <div id="flush-collapseThree" class="accordion-collapse collapse" aria-labelledby="flush-headingThree" data-bs-parent="#accordionFlushExample">
-          <div class="d-flex flex-column justify-content-center align-items-center p-4">
-            <button v-for="(tab, i) in models_list" :key="i" :draggable="true" @dragstart="onDragStart($event,'model', tab.id)" type="button" class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2">
-              <i class="fa-brands fa-hive me-2"></i>{{tab.name}}
-            </button>
+          <div class="d-flex flex-column justify-content-center  p-4">
+            <template v-for="(tab, i) in models_list" :key="i">
+              <button :draggable="true" @dragstart="onDragStart($event,'model', tab.id)" type="button" class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2" data-bs-toggle="collapse" :data-bs-target="`#collapseExample${i}`" aria-expanded="false" :aria-controls="`collapseExample${i}`">
+                <i class="fa-brands fa-hive me-2"></i>{{tab.name}}
+              </button>
+              <div class="collapse ms-5 pe-2" :id="`collapseExample${i}`">
+                <button @click="deleteModel(tab.id)" class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2" type="button">
+                  <i class="fa-solid fa-trash me-2 text-danger"></i>Remove 
+                </button>
+              </div>
+            </template>
             <!-- <button type="button" class="btn-style btn btn-outline-light text-dark fw-normal shadow-none d-flex justify-content-start align-items-center w-100 mb-2">
               <i class="fa-brands fa-hive me-2"></i>Data Model 2
             </button>
@@ -150,9 +157,21 @@
         <i class="fa-regular fa-copyright me-1"></i>Periscope Labs Limited 2023
       </div> -->
     </div>
+    <ConfirmAlert
+      v-if="deleteCon"
+      :deleteCheck="deleteCheck"
+      :cancelCheck="cancelCheck"
+      :alertMsg="'Are you sure you want to remove this Report Model?'"
+    ></ConfirmAlert>
+    <spinner v-if="loader"></spinner>
   </aside>
+
 </template>
 <script>
+import spinner from './loader/spinner.vue';
+import axios from 'axios';
+import ConfirmAlert from './modal/ConfirmAlert.vue'
+import toastr from '@/utils/toaster';
 export default {
   setup(){
     function onDragStart(event, nodeType, value) {
@@ -171,6 +190,10 @@ export default {
       onDragStart
     }
   },
+  components:{
+    ConfirmAlert,
+    spinner
+  },
   props:[
     'tables_list',
     'views_list',
@@ -182,8 +205,37 @@ export default {
     'setMappedTable',
     'db_name',
     'setEmpty',
+    'getModelsList'
   ],
+  data() {
+    return {
+      loader: false,
+      deleteCon: false,
+      mod_id: null
+    }
+  },
   methods: {
+    deleteModel(id){
+      this.deleteCon = true;
+      this.mod_id = id
+    },
+    async deleteCheck(flag){
+      this.loader = true
+      if (flag) {
+        const { data:{ success, message } } = await axios.get(`/remove-report?model_id=${this.mod_id}`);
+        if (success) {
+          this.cancelCheck()
+          this.getModelsList()
+          toastr.success(message);
+        } else {
+          toastr.error(message);
+        }
+      }
+      this.loader = false
+    },
+    cancelCheck(){
+      this.deleteCon = false;
+    }
   },
 }
 </script>

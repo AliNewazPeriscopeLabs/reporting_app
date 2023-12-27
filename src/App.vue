@@ -33,7 +33,11 @@
       :setSortBy="setSortBy"
       :setSpin="setSpin"
       :setLimit="setLimit"
+      :setOffset="setOffset"
       :limit="limit"
+      :offset="offset"
+      :setReportInfo="setReportInfo"
+      :reportModelInfo="reportModelInfo" 
     ></router-view>
   </div>
 </template>
@@ -71,12 +75,14 @@ export default {
       query_error: '',
       query:'',
       limit:200,
+      offset:0,
       mappedTable: [],
       savedTableColumns: {},
       savedJoins: [],
       filters: [],
       sort_by: [],
-      group_by: []
+      group_by: [],
+      reportModelInfo:{} 
     }
   },
   methods:{
@@ -85,6 +91,9 @@ export default {
     },
     setLimit(l){
       this.limit = l;
+    },
+    setOffset(o){
+      this.offset = o;
     },
     addSortBy() {
       this.sort_by.push({ column: {}, value: 'order by', order: 'asc'  });
@@ -118,6 +127,7 @@ export default {
       this.sort_by = [];
       this.selectedColumns = [];
       this.savedTableColumns = {};
+      this.reportModelInfo = {};
     },
     setSelectedColumns(columns){
       const table = columns[0].split('.').shift()
@@ -149,19 +159,24 @@ export default {
     setSavedColumns(columns={}){
       this.savedTableColumns = {...columns}
     },
-    async saveReportData(id, report_name, report_desc, query, model) {
-      const { data:{ success, message } } = await axios.post('/save-report',{
+    async saveReportData(id, report_name, report_desc, query, model, model_id = null) {
+      console.log(model_id)
+      const { data:{ mId, success, message } } = await axios.post('/save-report',{
         connection_id: id,
         name: report_name,
         description: report_desc,
         data_query: query,
-        data_model: model
+        data_model: model,
+        model_id : model_id
       });
       if (success) {
-        return {success, message};
+        return {mId, success, message};
       } else {
-        return {success, message};
+        return {mId, success, message};
       }
+    },
+    setReportInfo(info){
+      this.reportModelInfo = info;
     }
   }
 }

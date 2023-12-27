@@ -7,7 +7,7 @@
                 <button v-if="joins.length > 0" class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Joins</button>
                 <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Group By</button>
                 <button class="nav-link" id="nav-sort-tab" data-bs-toggle="tab" data-bs-target="#nav-sort" type="button" role="tab" aria-controls="nav-sort" aria-selected="false">Sort By</button>
-                <button class="nav-link" id="nav-limit-tab" data-bs-toggle="tab" data-bs-target="#nav-limit" type="button" role="tab" aria-controls="nav-limit" aria-selected="false">Limit</button>
+                <button class="nav-link" id="nav-limit-tab" data-bs-toggle="tab" data-bs-target="#nav-limit" type="button" role="tab" aria-controls="nav-limit" aria-selected="false">Limit & Offest</button>
             </div>
         </nav>
         <div class="tab-content p-2 border bg-light" id="nav-tabContent" style="max-height: 200px; overflow-y: scroll; overflow-x: hidden;">
@@ -44,7 +44,7 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <select v-if="filter.column != ''" class="form-control" v-model="filter.operator_type">
+                                        <select v-if="filter.column != ''" class="form-control" v-model="filter.operator_type" @change="filter.filter_value = {}">
                                             <option :value="null" disabled selected>Select</option>
                                             <option v-for="(operators, index) in (numeric_data_types.includes(filter.column.data_type) ? numbers_type_operator : date_and_time_data_types.includes(filter.column.data_type) ? date_type_operator : strings_type_operator)" :key="index" :value="operators.value">{{ operators.name }}</option>
                                         </select>
@@ -214,15 +214,18 @@
                     <table class="table table-hover table-borderless">
                         <thead>
                             <tr>
-                                <th style="width: 40%">Limit</th>
-                                <!-- <th style="width: 12%">Order</th> -->
+                                <th style="width: 20%">Limit</th>
+                                <th style="width: 20%">Offset</th>
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="rule-container">
                                 <td>
-                                    <input min="10" @change="setLimit(limit)"  :class="['form-control']" type="number" style="width: 100%;"  v-model="limit" required="required" />
+                                    <input min="10" @change="(event) => setLimit(event.target.value)"  :class="['form-control']" type="number" style="width: 100%;" :value="limit" required="required" />
+                                </td>
+                                <td>
+                                    <input min="0" @change="(event) => setOffset(event.target.value)"  :class="['form-control']" type="number" style="width: 100%;" :value="offset" required="required" />
                                 </td>
                             </tr>
                         </tbody>
@@ -250,92 +253,94 @@ export default {
         'updateJoinType',
         'columns',
         'setLimit',
+        'setOffset',
+        'offset',
+        'limit'
     ],
-  data() {
-    return {
-      limit: 200,
-      numbers_type_operator: [
-        {name: '=', value: '='},
-        {name: '>', value: '>'},
-        {name: '<', value: '<'},
-        {name: '>=', value: '>='},
-        {name: '<=', value: '<='},
-        {name: 'not equal', value: '!='},
-        {name: 'between', value: 'between'},
-        {name: 'is blank', value: '= ""'},
-        {name: 'is not blank', value: '!= ""'},
-      ],
-      strings_type_operator: [
-        {name: '=', value: '='},
-        {name: 'like', value: 'like'},
-        {name: 'not like', value: 'not like'},
-        {name: 'not equal', value: '!='},
-        {name: 'is blank', value: '= ""'},
-        {name: 'is not blank', value: '!= ""'},
-      ],
-      date_type_operator: [
-        {name: '=', value: '='},
-        {name: '>', value: '>'},
-        {name: '<', value: '<'},
-        {name: '>=', value: '>='},
-        {name: '<=', value: '<='},
-        {name: 'not equal', value: '!='},
-        {name: 'between', value: 'between'},
-        {name: 'is blank', value: '= ""'},
-        {name: 'is not blank', value: '!= ""'},
-      ],
-      numeric_data_types: [
-        'int',
-        'bigint',
-        'float',
-        'double',
-        'decimal',
-        'integer',
-        'smallint',
-        'numeric',
-        'real',
-        'double precision'
-      ],
-      date_and_time_data_types: [
-        'date',
-        'time',
-        'datetime',
-        'timestamp',
-        'timestamptz',
-        'interval'
-      ],
-      isBlank: '= ""',
-      isNotBlank: '!= ""'
-    };
-  },
-  methods: {
-    columnList() {
-        let columnList = []
-        for (const column in this.columns) {
-            for (const el of this.columns[column]) {
-                columnList.push({
-                    ...el,
-                    table_name: column
-                })
+    data() {
+        return {
+        numbers_type_operator: [
+            {name: '=', value: '='},
+            {name: '>', value: '>'},
+            {name: '<', value: '<'},
+            {name: '>=', value: '>='},
+            {name: '<=', value: '<='},
+            {name: 'not equal', value: '!='},
+            {name: 'between', value: 'between'},
+            {name: 'is blank', value: '= ""'},
+            {name: 'is not blank', value: '!= ""'},
+        ],
+        strings_type_operator: [
+            {name: '=', value: '='},
+            {name: 'like', value: 'like'},
+            {name: 'not like', value: 'not like'},
+            {name: 'not equal', value: '!='},
+            {name: 'is blank', value: '= ""'},
+            {name: 'is not blank', value: '!= ""'},
+        ],
+        date_type_operator: [
+            {name: '=', value: '='},
+            {name: '>', value: '>'},
+            {name: '<', value: '<'},
+            {name: '>=', value: '>='},
+            {name: '<=', value: '<='},
+            {name: 'not equal', value: '!='},
+            {name: 'between', value: 'between'},
+            {name: 'is blank', value: '= ""'},
+            {name: 'is not blank', value: '!= ""'},
+        ],
+        numeric_data_types: [
+            'int',
+            'bigint',
+            'float',
+            'double',
+            'decimal',
+            'integer',
+            'smallint',
+            'numeric',
+            'real',
+            'double precision'
+        ],
+        date_and_time_data_types: [
+            'date',
+            'time',
+            'datetime',
+            'timestamp',
+            'timestamptz',
+            'interval'
+        ],
+        isBlank: '= ""',
+        isNotBlank: '!= ""'
+        };
+    },
+    methods: {
+        columnList() {
+            let columnList = []
+            for (const column in this.columns) {
+                for (const el of this.columns[column]) {
+                    columnList.push({
+                        ...el,
+                        table_name: column
+                    })
+                }
             }
+            return columnList;
+        },
+        joinsPrimaryTable(from_table, selected_column) {
+            const columnList = this.columns[from_table].filter(column => column.column_name != selected_column);
+            return columnList;
+        },
+        joinsSecondaryTable(join) {
+            console.log(join)
+            let columnList = [];
+            if (join.to_column?.column_name != undefined) {
+                columnList = this.columns[join.to_table].filter(column=>column.data_type == join.from_column.data_type && column.column_name != join.to_column?.column_name);
+            } else {
+                columnList = this.columns[join.to_table].filter(column=>column.data_type == join.from_column.data_type);
+            }
+            return columnList;
         }
-        return columnList;
-    },
-    joinsPrimaryTable(from_table, selected_column) {
-        const columnList = this.columns[from_table].filter(column => column.column_name != selected_column);
-        return columnList;
-    },
-    joinsSecondaryTable(join) {
-        console.log(join)
-        let columnList = [];
-        if (join.to_column?.column_name != undefined) {
-            columnList = this.columns[join.to_table].filter(column=>column.data_type == join.from_column.data_type && column.column_name != join.to_column?.column_name);
-        } else {
-            columnList = this.columns[join.to_table].filter(column=>column.data_type == join.from_column.data_type);
-        }
-        return columnList;
     }
-  }
 };
 </script>
 <style scoped>

@@ -8,8 +8,8 @@
               <div class="modal-body">
                 <div class="m-5">
                     <div class="d-flex justify-content-center align-items-center mb-4">
-                      <label class="text-center">
-                        <i class="fa-solid fa-trash me-2" style="color: #f70227;"></i>Are you sure you want to remove this connection?
+                      <label class="text-center text-dark">
+                        <i class="fa-solid fa-trash me-2" style="color: #f70227;"></i>{{ alertMsg }}
                       </label>
                     </div>
 
@@ -41,7 +41,8 @@
 export default {
   props:[ 
     'deleteCheck',
-    'cancelCheck'
+    'cancelCheck',
+    'alertMsg'
   ],
   data(){
     return {

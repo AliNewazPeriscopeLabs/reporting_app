@@ -10,6 +10,7 @@
       :setSavedColumns="setSavedColumns"
       :db_name="db_name"
       :setEmpty="setEmpty"
+      :getModelsList="getModelsList"
     />
     <div class="d-flex flex-column justify-content-center align-items-center w-100" style="height: 100vh;">
       <VueFlow 
@@ -27,13 +28,16 @@
         </template>
         <Panel :position="PanelPosition.TopRight" class="controls">
           <div class="d-flex justify-content-center align-items-center">
-            <router-link v-show="tables.length > 0" @click="runReportData" :to="{ name: 'preview', query:{ id: id } }" class="btn btn-outline-primary btn-sm me-2">
+            <button v-show="tables.length > 0" @click="runReportData" class="btn btn-outline-primary btn-sm me-2">
               Preview
-            </router-link>
+            </button>
             <button style="background-color: #113285; color: white" title="Reset Transform" @click="resetTransform(), setEmpty(), joins=[], columns={}">
                 <svg width="16" height="16" viewBox="0 0 32 32">
                     <path fill="#FFFFFB" d="M18 28A12 12 0 1 0 6 16v6.2l-3.6-3.6L1 20l6 6l6-6l-1.4-1.4L8 22.2V16a10 10 0 1 1 10 10Z" />
                 </svg>
+            </button>
+            <button v-if="selectedNode" class="btn btn-outline-danger btn-sm mx-2" title="Remove Selected Node" @click="removeNode()">
+              <i class="fa fa-trash"></i>
             </button>
           </div>
         </Panel>
@@ -55,6 +59,9 @@
         :removeSortBy="removeSortBy"
         :setLimit="setLimit"
         :columns="columns"
+        :setOffset="setOffset"
+        :offset="offset"
+        :limit="limit"
       />
     </div>
     <spinner v-if="spin"></spinner>
@@ -80,17 +87,19 @@ import JoinModal from './modal/JoinModal.vue'
 import spinner from './loader/spinner.vue'
 import axios from 'axios'
 import { ref } from 'vue'
+import toastr from '@/utils/toaster';
 export default {
   setup() {
     let tables = ref([]);
     let joinModal = ref(false);
     let id = 0;
+    let selectedNode = ref('');
     // let s_table = '', t_table = '';
     function getId(table) {
       return `${table}_${id++}`;
     }
 
-    const { findNode, onConnect, addEdges, addNodes, project, vueFlowRef, $reset } = useVueFlow({
+    const { findNode, onConnect, addEdges, addNodes, project, vueFlowRef, $reset, removeNodes, onNodeClick } = useVueFlow({
       nodes: [
         {
           id: '1',
@@ -113,7 +122,9 @@ export default {
         event.dataTransfer.dropEffect = 'move'
       }
     }
-
+    onNodeClick((event) => {
+      selectedNode.value = event.node.id;
+    })
 
     return {
       tables,
@@ -127,7 +138,9 @@ export default {
       vueFlowRef,
       onConnect,
       getId,
-      addEdges
+      addEdges,
+      removeNodes,
+      selectedNode
     }
   },
   data() {
@@ -179,7 +192,10 @@ export default {
     'setSortBy',
     'setLimit',
     'limit',
-    'setMappedTable'
+    'setMappedTable',
+    'setReportInfo',
+    'setOffset',
+    'offset'
   ],
   async created() {
     this.spin=true;
@@ -263,7 +279,7 @@ export default {
       const model_id = event.dataTransfer?.getData('application/model')
       if (model_id) {
         const model = this.models_list.find(e=>e.id == model_id);
-        // console.log(model.data_model);
+        console.log(model);
         const joins = JSON.parse(model.data_model).joins;
         // this.joins
         let col= [];
@@ -277,6 +293,7 @@ export default {
         this.setGroupBy(JSON.parse(model.data_model).group_by);
         this.setSortBy(JSON.parse(model.data_model).sort_by);
         this.setFilters(JSON.parse(model.data_model).filters);
+        this.setReportInfo({report_id : model_id, report_name: model.name, report_desc: model.description});
         this.tables = JSON.parse(model.data_model).tables;
         return
       }
@@ -360,28 +377,64 @@ export default {
       this.spin=false;
     },
     async runReportData(){
-      this.setSpin(true);
-      this.setSavedJoins(this.joins);
-      this.setMappedTable(this.tables);
-      this.setSavedColumns(this.columns);
-      const connection = this.connections.find(e=>e.id == this.id);
-      const {data:{data, query,success, error_message}} = await axios.post('/get-report-data',{
-        joins: this.joins,
-        sort_by: this.sort_by,
-        group_by: this.group_by,
-        table: this.joins.length >0 ? [] : this.orphan_tables,
-        selecedCols: this.selectedColumns,
-        filters: this.filters,
-        limit: this.limit,
-        connection
-      });
-      const columns = data.length>0 ? Object.keys(data[0]) : ['No Data Found'];
-      if (success) {
-        this.setData({columns, data, query});
+      if(!this.validateArray(this.sort_by)) {
+        return toastr.error('Please fill up all the fields.'); 
+      } else if (!this.validateArray(this.group_by)) {
+        return toastr.error('Please fill up all the fields.'); 
+      } else if (!this.validateArray(this.filters)){
+       return toastr.error('Please fill up all the fields.'); 
       } else {
-        this.setData({query, error_message});
+        this.$router.push({ name: 'preview', query:{ id: this.id }  })
       }
-      this.setSpin(false);
+      
+      this.setSpin(true); 
+        this.setSavedJoins(this.joins);
+        this.setMappedTable(this.tables);
+        this.setSavedColumns(this.columns);
+        const connection = this.connections.find(e=>e.id == this.id);
+        const {data:{data, query,success, error_message}} = await axios.post('/get-report-data',{
+          joins: this.joins,
+          sort_by: this.sort_by,
+          group_by: this.group_by,
+          table: this.joins.length >0 ? [] : this.orphan_tables,
+          selecedCols: this.selectedColumns,
+          filters: this.filters,
+          limit: this.limit,
+          offset: this.offset,
+          connection
+        });
+        const columns = data.length>0 ? Object.keys(data[0]) : ['No Data Found'];
+        if (success) {
+          this.setData({columns, data, query});
+        } else {
+          this.setData({query, error_message});
+        }
+        this.setSpin(false);
+    },
+    validateArray(inputArray) {
+        if (!Array.isArray(inputArray)) {
+          return false;
+        }
+
+        for (let i = 0; i < inputArray.length; i++) {
+            const obj = inputArray[i];
+            if (Object.values(obj).some(value => {
+                if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                    if (Object.keys(value).length === 0 && Object.keys(value).some(key => key !== 'filter_value')) {
+                        return true; // Check if it's an empty object
+                    }
+                    return false
+                }
+                return value === null || value === '';
+            })) {
+                return false;
+            }
+        }
+        return true;
+    },
+    removeNode(){
+      this.removeNodes(this.selectedNode)
+      this.selectedNode = '';
     }
   },
 }

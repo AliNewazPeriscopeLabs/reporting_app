@@ -47,6 +47,7 @@
       v-if="deleteCon"
       :deleteCheck="deleteCheck"
       :cancelCheck="cancelCheck"
+      :alertMsg="'Are you sure you want to remove this connection?'"
     ></ConfirmAlert>
     <spinner v-if="loader"></spinner>
 </div>
