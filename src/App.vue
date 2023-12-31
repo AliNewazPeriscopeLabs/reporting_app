@@ -129,14 +129,30 @@ export default {
       this.savedTableColumns = {};
       this.reportModelInfo = {};
     },
-    setSelectedColumns(columns){
-      const table = columns[0].split('.').shift()
-      this.selectedColumns = this.selectedColumns.filter(e=>{
-        const table_ = e.split('.').shift();
-        return table !== table_
-      })
+    // setSelectedColumns(columns){
+    //   const table = columns[0].split('.').shift()
+    //   this.selectedColumns = this.selectedColumns.filter(e=>{
+    //     const table_ = e.split('.').shift();
+    //     return table !== table_
+    //   })
 
-      this.selectedColumns = [...new Set([...this.selectedColumns, ...columns])];
+    //   this.selectedColumns = [...new Set([...this.selectedColumns, ...columns])];
+    // },
+    setSelectedColumns(columns) {
+      this.selectedColumns = this.selectedColumns.filter(e => {
+        const table_ = e.column_name.split('.').shift();
+        return !columns.some(column => table_ === column.column_name.split('.').shift());
+      });
+
+      // const newColumns = columns.map(column => {
+      //   const [table, columnName] = column.column_name.split('.');
+      //   return {
+      //     column_name: column,
+      //     alias: `${table}_${columnName}`
+      //   };
+      // });
+
+      this.selectedColumns = [...this.selectedColumns, ...columns];
     },
     setData({columns=[], data=[], query='', error_message=''} ){
       this.columns = [...columns]
@@ -160,7 +176,7 @@ export default {
       this.savedTableColumns = {...columns}
     },
     async saveReportData(id, report_name, report_desc, query, model, model_id = null) {
-      console.log(model_id)
+      // console.log(model_id)
       const { data:{ mId, success, message } } = await axios.post('/save-report',{
         connection_id: id,
         name: report_name,

@@ -18,7 +18,7 @@ import { Handle, Position } from '@vue-flow/core'
     <span v-if="!expand" @click="expand=true" style="color: #0000ff7a; text-decoration: underline;">view columns</span>
     <template v-if="columns[data.table_name]?.length && expand">
       <div v-for="(col, i) in columns[data.table_name]" :key="i" class="form-check">
-          <input v-model="selectedColumns" class="form-check-input" type="checkbox" :value="`${data.table_name}.${col.column_name}`" :id="`${data.table_name}_${col.column_name}_${i}`">
+          <input v-model="checkedColumns" class="form-check-input" type="checkbox" :value="`${data.table_name}.${col.column_name}`" :id="`${data.table_name}_${col.column_name}_${i}`">
           <label class="form-check-label" :for="`${data.table_name}_${col.column_name}_${i}`">
               {{ col.column_name }}
           </label>
@@ -46,15 +46,17 @@ export default {
   ],
   data() {
     return {
+      checkedColumns:[],
       selectedColumns:[],
       expand: false
     }
   },
   mounted() {
     if (this.preSelectedColumns.length>0) {
+      this.checkedColumns = this.preSelectedColumns.map(column => column.column_name);
       this.selectedColumns = this.preSelectedColumns.filter(e=>{
-        const table = e.split('.').shift();
-        console.log(table, this.data.table_name, 'got table');
+        const table = e.column_name.split('.').shift();
+        // console.log(table, this.data.table_name, 'got table');
         return table === this.data.table_name
       })
     }
@@ -64,7 +66,19 @@ export default {
       if (x.length>0) {
         this.setSelectedColumns(x)
       }
-    }
+    },
+    checkedColumns(x){
+      if (x.length > 0) {
+        this.selectedColumns = x.map(column => {
+          const [table, columnName] = column.split('.');
+          const predefinedColumn = this.preSelectedColumns.length > 0 ? this.preSelectedColumns.find(col => col.column_name === column) : null;
+          return {
+            column_name: column,
+            alias: predefinedColumn ? predefinedColumn.alias : `${table}_${columnName}`
+          };
+        });
+      }
+    }    
   }
 }
 </script>

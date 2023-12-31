@@ -62,6 +62,8 @@
         :setOffset="setOffset"
         :offset="offset"
         :limit="limit"
+        :selectedColumns="selectedColumns"
+        :mappedTables="mappedTables"
       />
     </div>
     <spinner v-if="spin"></spinner>
@@ -262,7 +264,7 @@ export default {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     },
     createJoin(x){
-      console.log(x);
+      // console.log(x);
       const joinData = JSON.parse(JSON.stringify(x))
       joinData.join_id = this.tables[this.tables.length-1].join_id;
       this.tables[this.tables.length-1].label = joinData.join_type;
@@ -279,7 +281,7 @@ export default {
       const model_id = event.dataTransfer?.getData('application/model')
       if (model_id) {
         const model = this.models_list.find(e=>e.id == model_id);
-        console.log(model);
+        // console.log(model);
         const joins = JSON.parse(model.data_model).joins;
         // this.joins
         let col= [];
@@ -289,7 +291,7 @@ export default {
         }
         await Promise.all(col);
         this.joins = [...joins];
-        JSON.parse(model.data_model).columns ? this.setSelectedColumns(JSON.parse(model.data_model).columns) : '';
+        JSON.parse(model.data_model).columns.length ? this.setSelectedColumns(JSON.parse(model.data_model).columns) : '';
         this.setGroupBy(JSON.parse(model.data_model).group_by);
         this.setSortBy(JSON.parse(model.data_model).sort_by);
         this.setFilters(JSON.parse(model.data_model).filters);
@@ -378,14 +380,17 @@ export default {
     },
     async runReportData(){
       if(!this.validateArray(this.sort_by)) {
-        return toastr.error('Please fill up all the fields.'); 
+        return toastr.error('Please fill up all the fields!'); 
       } else if (!this.validateArray(this.group_by)) {
-        return toastr.error('Please fill up all the fields.'); 
+        return toastr.error('Please fill up all the fields!'); 
       } else if (!this.validateArray(this.filters)){
-       return toastr.error('Please fill up all the fields.'); 
+       return toastr.error('Please fill up all the fields!'); 
+      } else if (this.selectedColumns.length === 0) {
+        return toastr.error('Please select Columns!'); 
       } else {
         this.$router.push({ name: 'preview', query:{ id: this.id }  })
       }
+      
       
       this.setSpin(true); 
         this.setSavedJoins(this.joins);

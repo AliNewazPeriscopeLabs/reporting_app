@@ -177,7 +177,7 @@ export default {
     function onDragStart(event, nodeType, value) {
       if (event.dataTransfer) {
         if (nodeType === 'model') {
-          console.log(value);
+          // console.log(value);
           event.dataTransfer.setData('application/model', value)
           return
         }

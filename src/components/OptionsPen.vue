@@ -8,6 +8,7 @@
                 <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Group By</button>
                 <button class="nav-link" id="nav-sort-tab" data-bs-toggle="tab" data-bs-target="#nav-sort" type="button" role="tab" aria-controls="nav-sort" aria-selected="false">Sort By</button>
                 <button class="nav-link" id="nav-limit-tab" data-bs-toggle="tab" data-bs-target="#nav-limit" type="button" role="tab" aria-controls="nav-limit" aria-selected="false">Limit & Offest</button>
+                <button v-if="tables.length > 0" class="nav-link" id="nav-columns-tab" data-bs-toggle="tab" data-bs-target="#nav-columns" type="button" role="tab" aria-controls="nav-columns" aria-selected="false">Columns</button>
             </div>
         </nav>
         <div class="tab-content p-2 border bg-light" id="nav-tabContent" style="max-height: 200px; overflow-y: scroll; overflow-x: hidden;">
@@ -232,6 +233,29 @@
                     </table>
                 </div>
             </div>
+            <div v-if="tables.length > 0" class="tab-pane fade" id="nav-columns" role="tabpanel" aria-labelledby="nav-columns-tab">
+                <div class="query-builder">
+                    <table class="table table-hover table-borderless">
+                        <thead>
+                            <tr>
+                                <th style="width: 50%">Column</th>
+                                <th style="width: 50%">Alias</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="rule-container" v-for="(col, index) in selectedColumns" :key="index">
+                                <td>
+                                    <input :class="['form-control']" type="text" style="width: 100%;" :value="col.column_name" readonly/>
+                                </td>
+                                <td>
+                                    <input :class="['form-control']" type="text" style="width: 100%;" v-model="col.alias"/>
+                                </td> 
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -255,7 +279,8 @@ export default {
         'setLimit',
         'setOffset',
         'offset',
-        'limit'
+        'limit',
+        'selectedColumns'
     ],
     data() {
         return {
@@ -325,13 +350,13 @@ export default {
                 }
             }
             return columnList;
-        },
+        }, 
         joinsPrimaryTable(from_table, selected_column) {
             const columnList = this.columns[from_table].filter(column => column.column_name != selected_column);
             return columnList;
         },
         joinsSecondaryTable(join) {
-            console.log(join)
+            // console.log(join)
             let columnList = [];
             if (join.to_column?.column_name != undefined) {
                 columnList = this.columns[join.to_table].filter(column=>column.data_type == join.from_column.data_type && column.column_name != join.to_column?.column_name);
