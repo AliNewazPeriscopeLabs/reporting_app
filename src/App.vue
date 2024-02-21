@@ -38,6 +38,8 @@
       :offset="offset"
       :setReportInfo="setReportInfo"
       :reportModelInfo="reportModelInfo" 
+      :selectedModel="selectedModel"
+      :setSelectedModel="setSelectedModel"
     ></router-view>
   </div>
 </template>
@@ -82,7 +84,8 @@ export default {
       filters: [],
       sort_by: [],
       group_by: [],
-      reportModelInfo:{} 
+      reportModelInfo:{},
+      selectedModel: null 
     }
   },
   methods:{
@@ -128,30 +131,22 @@ export default {
       this.selectedColumns = [];
       this.savedTableColumns = {};
       this.reportModelInfo = {};
+      this.selectedModel = null
     },
-    // setSelectedColumns(columns){
-    //   const table = columns[0].split('.').shift()
-    //   this.selectedColumns = this.selectedColumns.filter(e=>{
-    //     const table_ = e.split('.').shift();
-    //     return table !== table_
-    //   })
 
-    //   this.selectedColumns = [...new Set([...this.selectedColumns, ...columns])];
-    // },
-    setSelectedColumns(columns) {
+    setSelectedColumns(columns, type = 'add', table = null) {
+      if (type === 'remove') {
+        this.selectedColumns = this.selectedColumns.filter(e => {
+          const table_ = e.column_name.split('.').shift();
+          return table_ != table;
+        });
+        return
+      }
       this.selectedColumns = this.selectedColumns.filter(e => {
         const table_ = e.column_name.split('.').shift();
         return !columns.some(column => table_ === column.column_name.split('.').shift());
       });
-
-      // const newColumns = columns.map(column => {
-      //   const [table, columnName] = column.column_name.split('.');
-      //   return {
-      //     column_name: column,
-      //     alias: `${table}_${columnName}`
-      //   };
-      // });
-
+ 
       this.selectedColumns = [...this.selectedColumns, ...columns];
     },
     setData({columns=[], data=[], query='', error_message=''} ){
@@ -193,6 +188,9 @@ export default {
     },
     setReportInfo(info){
       this.reportModelInfo = info;
+    },
+    setSelectedModel(model_id){
+      this.selectedModel = model_id
     }
   }
 }

@@ -4,7 +4,7 @@
       <router-link :to="{ name: 'table-map', query:{ id: id } }" class="text-decoration-none">
         <i class="fa-solid fa-arrow-left me-2"></i>Table Map
       </router-link>
-      <div class="d-flex justify-content-center align-items-center">
+      <div v-if="data_list.length" class="d-flex justify-content-center align-items-center">
         <button @click.prevent="saveReport()" type="button" class="btn btn-outline-primary btn-sm shadow-none me-2">
           <i class="fa-solid fa-floppy-disk me-2"></i>Save
         </button>
@@ -27,15 +27,16 @@
       </div>
     </div>
     <div class="mt-0">
-      <div v-if="report_has_info" class="mt-3">
+      <!-- <div v-if="report_has_info" class="mt-3">
         <h5 class="fw-normal mb-3">
           <i class="fa-solid fa-file-invoice me-2"></i>{{ reportModelInfo.report_name }}
         </h5>
         <p class=" fw-normal text-muted">
           <i class="fa-solid fa-clipboard me-2"></i>{{ reportModelInfo.report_desc }}
         </p>
-      </div>
-      <div v-else>
+      </div> -->
+      <!-- <div v-else> -->
+      <div>
         <div class="form-floating mb-0 w-50">
           <input type="text" class="form-control" id="floating1" placeholder="Enter Your Report Name" v-model="report_name">
           <label for="floating1">
@@ -52,11 +53,11 @@
           <label for="floating2">
             <i class="fa-solid fa-clipboard me-2"></i>Enter Your Report Description
           </label>
-          <div style="margin-left: 12px;">
+          <!-- <div style="margin-left: 12px;">
             <span class="text-danger" v-if="errorList['report_desc']">
               {{errorList['report_desc']}}
             </span>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -109,7 +110,8 @@ export default {
     'sort_by',
     'mappedTable',
     'reportModelInfo',
-    'setReportInfo'
+    'setReportInfo',
+    'setSelectedModel'
   ],
   components:{
     spinner
@@ -150,9 +152,9 @@ export default {
       if (this.report_name === "") {
         return true;
       }
-      if (this.report_desc === "") {
-        return true;
-      }
+      // if (this.report_desc === "") {
+      //   return true;
+      // }
       if (this.query === "") {
         return true;
       }
@@ -170,13 +172,13 @@ export default {
         this.errorList['report_name'] = null
       }
     },
-    report_desc: function(x){
-      if(x === '') {
-        this.errorList['report_desc'] = 'Report Description is required'
-      } else {
-        this.errorList['report_desc'] = null
-      }
-    },
+    // report_desc: function(x){
+    //   if(x === '') {
+    //     this.errorList['report_desc'] = 'Report Description is required'
+    //   } else {
+    //     this.errorList['report_desc'] = null
+    //   }
+    // },
   },
   methods: {
     async exportXls(){
@@ -264,6 +266,7 @@ export default {
         const {mId, success, message} = await this.saveReportData(this.con_id, this.report_name, this.report_desc, this.query, data_model, m_id)
         if (success) {
           this.setReportInfo({report_id: mId , report_name: this.report_name, report_desc: this.report_desc});
+          this.setSelectedModel(mId);
           toastr.success(message);
         } else {
           toastr.error(message);
@@ -299,11 +302,11 @@ export default {
         this.errorList['report_name'] = null
       }
     
-      if(this.report_desc === '') {
-        this.errorList['report_desc'] = 'Report Description is required'
-      } else {
-        this.errorList['report_desc'] = null
-      }
+      // if(this.report_desc === '') {
+      //   this.errorList['report_desc'] = 'Report Description is required'
+      // } else {
+      //   this.errorList['report_desc'] = null
+      // }
     }
   }
 }

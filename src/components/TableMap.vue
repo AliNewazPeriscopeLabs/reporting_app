@@ -1,6 +1,14 @@
 <template>
+<div style="height:100vh">
+  <!-- <Navbar 
+    :showSideBar="showSideBar" 
+    :showOptionsPane="showOptionsPane" 
+    @toggleSidebar="showSideBar = !showSideBar"
+    @toggleOptionsPane="showOptionsPane = !showOptionsPane"
+  /> -->
   <div class="dndflow" @drop="onDrop">
     <Sidebar 
+      v-if="showSideBar"
       :tables_list="tables_list"
       :views_list="views_list"
       :models_list="models_list"
@@ -11,11 +19,16 @@
       :db_name="db_name"
       :setEmpty="setEmpty"
       :getModelsList="getModelsList"
+      :selectedModel="selectedModel"
+      :loadModel="loadModel"
+      :runReportData="runReportData"
+      :tables="tables"
     />
     <div class="d-flex flex-column justify-content-center align-items-center w-100" style="height: 100vh;">
       <VueFlow 
         v-model="tables" 
         @dragover="onDragOver"
+        :connection-radius="80"
       >
         <template #node-custom="{ data }">
           <TableNode 
@@ -36,14 +49,15 @@
                     <path fill="#FFFFFB" d="M18 28A12 12 0 1 0 6 16v6.2l-3.6-3.6L1 20l6 6l6-6l-1.4-1.4L8 22.2V16a10 10 0 1 1 10 10Z" />
                 </svg>
             </button>
-            <button v-if="selectedNode" class="btn btn-outline-danger btn-sm mx-2" title="Remove Selected Node" @click="removeNode()">
+            <!-- <button v-if="selectedNode" class="btn btn-outline-danger btn-sm mx-2" title="Remove Selected Node" @click="removeNode()">
               <i class="fa fa-trash"></i>
-            </button>
+            </button> -->
           </div>
         </Panel>
         <Background/>  
       </VueFlow>
       <OptionsPen 
+        v-if="showOptionsPane"
         :updateJoinType="updateJoinType"
         :tables="tables"
         :filters="filters"
@@ -77,12 +91,15 @@
       :createJoin="createJoin"
     ></join-modal>
   </div>
+
+</div>
 </template>
 <script>
 import { Background } from '@vue-flow/background'
 import { Panel, PanelPosition, VueFlow, useVueFlow } from '@vue-flow/core'
 import { nextTick, watch } from 'vue'
 import Sidebar from './Sidebar.vue'
+// import Navbar from './Navbar.vue'
 import OptionsPen from './OptionsPen.vue'
 import TableNode from './TableNode.vue'
 import JoinModal from './modal/JoinModal.vue'
@@ -156,6 +173,8 @@ export default {
       joins: [],
       s_table: '',
       t_table: '',
+      showSideBar: true,
+      showOptionsPane: true,
     }
   },
   components:{
@@ -166,7 +185,8 @@ export default {
     TableNode,
     spinner,
     JoinModal,
-    Sidebar
+    Sidebar,
+    // Navbar
   },
   props:[
     'connections',
@@ -197,7 +217,9 @@ export default {
     'setMappedTable',
     'setReportInfo',
     'setOffset',
-    'offset'
+    'offset',
+    'selectedModel',
+    'setSelectedModel'
   ],
   async created() {
     this.spin=true;
@@ -221,10 +243,13 @@ export default {
       this.addEdges({
         ...params,
         label: 'Inner-Join',
-        style: { stroke: 'orange' },
-        labelBgStyle: { fill: 'orange' },
+        style: { stroke: 'blue' },
+        labelBgStyle: { fill: '#6d6d6d' },
+        labelStyle: { fill: 'white', fontSize: '12px', fontWeight: 'bold' },
         join_id: joinId,
-        type: 'step',
+        animated: true,
+        labelBgPadding: [10,10]
+        // type: 'step',
       })
     })
   },
@@ -280,23 +305,7 @@ export default {
       const tableName = event.dataTransfer?.getData('application/table')
       const model_id = event.dataTransfer?.getData('application/model')
       if (model_id) {
-        const model = this.models_list.find(e=>e.id == model_id);
-        // console.log(model);
-        const joins = JSON.parse(model.data_model).joins;
-        // this.joins
-        let col= [];
-        for (const join of joins) {
-          this.columns[join.from_table] === undefined ? col.push(this.getColumns(join.from_table)) : '';
-          this.columns[join.to_table] === undefined ? col.push(this.getColumns(join.to_table)) : '';
-        }
-        await Promise.all(col);
-        this.joins = [...joins];
-        JSON.parse(model.data_model).columns.length ? this.setSelectedColumns(JSON.parse(model.data_model).columns) : '';
-        this.setGroupBy(JSON.parse(model.data_model).group_by);
-        this.setSortBy(JSON.parse(model.data_model).sort_by);
-        this.setFilters(JSON.parse(model.data_model).filters);
-        this.setReportInfo({report_id : model_id, report_name: model.name, report_desc: model.description});
-        this.tables = JSON.parse(model.data_model).tables;
+        await this.loadModel(model_id)
         return
       }
       const { left, top } = this.vueFlowRef.getBoundingClientRect()
@@ -335,6 +344,26 @@ export default {
         )
         // console.log(node);
       })
+    },
+    async loadModel(model_id){
+      const model = this.models_list.find(e=>e.id == model_id);
+        // console.log(model);
+      const joins = JSON.parse(model.data_model).joins;
+      // this.joins
+      let col= [];
+      for (const join of joins) {
+        this.columns[join.from_table] === undefined ? col.push(this.getColumns(join.from_table)) : '';
+        this.columns[join.to_table] === undefined ? col.push(this.getColumns(join.to_table)) : '';
+      }
+      await Promise.all(col);
+      this.joins = [...joins];
+      JSON.parse(model.data_model).columns.length ? this.setSelectedColumns(JSON.parse(model.data_model).columns) : '';
+      this.setSelectedModel(model_id);
+      this.setGroupBy(JSON.parse(model.data_model).group_by);
+      this.setSortBy(JSON.parse(model.data_model).sort_by);
+      this.setFilters(JSON.parse(model.data_model).filters);
+      this.setReportInfo({report_id : model_id, report_name: model.name, report_desc: model.description});
+      this.tables = JSON.parse(model.data_model).tables;
     },
     removeJoin(){
       this.joinModal = false;
@@ -379,6 +408,9 @@ export default {
       this.spin=false;
     },
     async runReportData(){
+
+      console.log(this.filters)
+
       if(!this.validateArray(this.sort_by)) {
         return toastr.error('Please fill up all the fields!'); 
       } else if (!this.validateArray(this.group_by)) {
@@ -388,58 +420,64 @@ export default {
       } else if (this.selectedColumns.length === 0) {
         return toastr.error('Please select Columns!'); 
       } else {
-        this.$router.push({ name: 'preview', query:{ id: this.id }  })
+        // this.$router.push({ name: 'preview', query:{ id: this.id }  })
       }
       
       
-      this.setSpin(true); 
-        this.setSavedJoins(this.joins);
-        this.setMappedTable(this.tables);
-        this.setSavedColumns(this.columns);
-        const connection = this.connections.find(e=>e.id == this.id);
-        const {data:{data, query,success, error_message}} = await axios.post('/get-report-data',{
-          joins: this.joins,
-          sort_by: this.sort_by,
-          group_by: this.group_by,
-          table: this.joins.length >0 ? [] : this.orphan_tables,
-          selecedCols: this.selectedColumns,
-          filters: this.filters,
-          limit: this.limit,
-          offset: this.offset,
-          connection
-        });
-        const columns = data.length>0 ? Object.keys(data[0]) : ['No Data Found'];
-        if (success) {
-          this.setData({columns, data, query});
-        } else {
-          this.setData({query, error_message});
-        }
-        this.setSpin(false);
+      // this.setSpin(true); 
+      //   this.setSavedJoins(this.joins);
+      //   this.setMappedTable(this.tables);
+      //   this.setSavedColumns(this.columns);
+      //   const connection = this.connections.find(e=>e.id == this.id);
+      //   const {data:{data, query,success, error_message}} = await axios.post('/get-report-data',{
+      //     joins: this.joins,
+      //     sort_by: this.sort_by,
+      //     group_by: this.group_by,
+      //     table: this.joins.length >0 ? [] : this.orphan_tables,
+      //     selecedCols: this.selectedColumns,
+      //     filters: this.filters,
+      //     limit: this.limit,
+      //     offset: this.offset,
+      //     connection
+      //   });
+      //   const columns = data.length>0 ? Object.keys(data[0]) : ['No Data Found'];
+      //   if (success) {
+      //     this.setData({columns, data, query});
+      //   } else {
+      //     this.setData({query, error_message});
+      //   }
+      //   this.setSpin(false);
     },
     validateArray(inputArray) {
-        if (!Array.isArray(inputArray)) {
-          return false;
-        }
+      if (!Array.isArray(inputArray)) {
+        return false;
+      }
 
-        for (let i = 0; i < inputArray.length; i++) {
-            const obj = inputArray[i];
-            if (Object.values(obj).some(value => {
-                if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-                    if (Object.keys(value).length === 0 && Object.keys(value).some(key => key !== 'filter_value')) {
-                        return true; // Check if it's an empty object
-                    }
-                    return false
-                }
-                return value === null || value === '';
-            })) {
-                return false;
-            }
-        }
-        return true;
+      for (let i = 0; i < inputArray.length; i++) {
+          const obj = inputArray[i];
+          if (Object.values(obj).some(value => {
+              if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                  if (Object.keys(value).length === 0 && Object.keys(value).some(key => key !== 'filter_value')) {
+                      return true; // Check if it's an empty object
+                  }
+                  return false
+              }
+              return value === null || value === '';
+          })) {
+              return false;
+          }
+      }
+      return true;
     },
     removeNode(){
       this.removeNodes(this.selectedNode)
       this.selectedNode = '';
+    },
+    setJoins(joins){
+      this.joins = [...joins];
+    },
+    setTables(tables){
+      this.tables = tables;
     }
   },
 }

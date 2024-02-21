@@ -317,6 +317,7 @@ export default {
         numeric_data_types: [
             'int',
             'bigint',
+            'tinyint',
             'float',
             'double',
             'decimal',

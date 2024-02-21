@@ -45,7 +45,7 @@
     ></ConnectionCreate>
     <ConfirmAlert
       v-if="deleteCon"
-      :deleteCheck="deleteCheck"
+      :confirmCheck="deleteCheck"
       :cancelCheck="cancelCheck"
       :alertMsg="'Are you sure you want to remove this connection?'"
     ></ConfirmAlert>

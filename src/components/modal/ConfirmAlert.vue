@@ -16,7 +16,7 @@
                     <div class="row justify-content-center">
                       <button  
                         class="btn btn-danger btn-sche p-2 me-2"
-                        @click.prevent="deleteCheck(true)"
+                        @click.prevent="confirmCheck(true)"
                       >
                         Yes
                       </button>
@@ -40,7 +40,7 @@
 <script>
 export default {
   props:[ 
-    'deleteCheck',
+    'confirmCheck',
     'cancelCheck',
     'alertMsg'
   ],
